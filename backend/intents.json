@@ -1,0 +1,221 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": [
+        "Hi",
+        "Hey",
+        "How are you",
+        "Is anyone there?",
+        "Hello",
+        "Good day"
+      ],
+      "responses": [
+        "Hey :-)",
+        "Hello, thanks for visiting",
+        "Hi there, what can I do for you?",
+        "Hi there, how can I help?"
+      ]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": ["Bye", "See you later", "Goodbye"],
+      "responses": [
+        "See you later, thanks for visiting",
+        "Have a nice day",
+        "Bye! Come back again soon."
+      ]
+    },
+    {
+      "tag": "thanks",
+      "patterns": ["Thanks", "Thank you", "That's helpful", "Thank's a lot!"],
+      "responses": ["Happy to help!", "Any time!", "My pleasure"]
+    },
+    {
+      "tag": "items",
+      "patterns": [
+        "Which items do you have?",
+        "What kinds of items are there?",
+        "What do you sell?"
+      ],
+      "responses": [
+        "We sell coffee and tea",
+        "We have coffee and tea"
+      ]
+    },
+    {
+      "tag": "payments",
+      "patterns": [
+        "Do you take credit cards?",
+        "Do you accept Mastercard?",
+        "Can I pay with Paypal?",
+        "Are you cash only?"
+      ],
+      "responses": [
+        "We accept VISA, Mastercard and Paypal",
+        "We accept most major credit cards, and Paypal"
+      ]
+    },
+    {
+      "tag": "delivery",
+      "patterns": [
+        "How long does delivery take?",
+        "How long does shipping take?",
+        "When do I get my delivery?"
+      ],
+      "responses": [
+        "Delivery takes 2-4 days",
+        "Shipping takes 2-4 days"
+      ]
+    },
+    {
+      "tag": "funny",
+      "patterns": [
+        "Tell me a joke!",
+        "Tell me something funny!",
+        "Do you know a joke?"
+      ],
+      "responses": [
+        "Why did the hipster burn his mouth? He drank the coffee before it was cool.",
+        "What did the buffalo say when his son left for college? Bison."
+      ]
+    },
+    {
+      "tag": "weather",
+      "patterns": [
+        "What's the weather like today?",
+        "Is it going to rain?",
+        "Tell me the weather forecast"
+      ],
+      "responses": [
+        "I'm sorry, I don't have real-time weather information.",
+        "You might want to check a weather website or app for the current forecast."
+      ]
+    },
+    {
+      "tag": "location",
+      "patterns": [
+        "Where are you located?",
+        "What is your address?",
+        "Are you based in a specific city?"
+      ],
+      "responses": [
+        "I'm a virtual assistant and don't have a physical location.",
+        "I exist in the digital realm, so no specific address for me!"
+      ]
+    },
+    {
+      "tag": "recommendation",
+      "patterns": [
+        "Can you recommend a good book?",
+        "What movie should I watch?",
+        "Any restaurant recommendations?"
+      ],
+      "responses": [
+        "For books, I recommend 'The Hitchhiker's Guide to the Galaxy' by Douglas Adams.",
+        "If you're into movies, 'The Shawshank Redemption' is a classic worth watching.",
+        "For restaurants, it depends on your location. Any specific cuisine you're interested in?"
+      ]
+    },
+    {
+      "tag": "tech",
+      "patterns": [
+        "Tell me about the latest technology news.",
+        "What's happening in the tech world?",
+        "Any interesting tech updates?"
+      ],
+      "responses": [
+        "I don't have real-time news updates, but you can check popular tech news websites like TechCrunch or The Verge.",
+        "Stay tuned to tech news websites for the latest updates and innovations."
+      ]
+    },
+    {
+      "tag": "music",
+      "patterns": [
+        "What's your favorite music genre?",
+        "Recommend a good song.",
+        "Tell me about popular music artists."
+      ],
+      "responses": [
+        "As a virtual assistant, I don't have personal preferences, but I can recommend checking out artists like Billie Eilish or Ed Sheeran for popular music.",
+        "If you tell me your favorite genre, I can recommend some great songs within that genre!"
+      ]
+    },
+    {
+      "tag": "tech_courses",
+      "patterns": [
+        "Tell me about tech courses",
+        "What tech courses do you offer?",
+        "Any recommended tech courses?"
+      ],
+      "responses": [
+        "We offer a wide range of tech courses to help you enhance your skills. Here are some of our featured courses:",
+        "1. Artificial Intelligence Fundamentals: Learn the basics of AI, machine learning, and natural language processing.",
+        "2. Full-Stack Web Development: Master both front-end and back-end development with technologies like HTML, CSS, JavaScript, Node.js, and React.",
+        "3. Cybersecurity Essentials: Acquire essential skills to secure systems, networks, and data from cyber threats.",
+        "4. Data Science and Analytics: Dive deep into data analysis, visualization, and machine learning techniques using tools like Python and R.",
+        "5. Cloud Computing Basics: Understand the fundamentals of cloud technology, services, and deployment strategies.",
+        "6. Mobile App Development: Learn to build mobile applications for iOS and Android platforms using Swift, Kotlin, and React Native.",
+        "7. DevOps Practices: Explore the principles and practices of DevOps for efficient software development and deployment.",
+        "8. UI/UX Design: Master the principles of user interface and user experience design to create engaging and user-friendly applications.",
+        "9. Blockchain Technology: Gain insights into blockchain fundamentals, smart contracts, and decentralized applications.",
+        "10. Internet of Things (IoT): Explore the world of connected devices and learn to build IoT solutions with sensors and microcontrollers."
+      ]
+    },
+    {
+      "tag": "course_details",
+      "patterns": [
+        "Can you provide details about a specific course?",
+        "Tell me more about the AI Fundamentals course.",
+        "What does the Full-Stack Web Development course cover?"
+      ],
+      "responses": [
+        "Certainly! Here are some details about the {course_name} course:",
+        "- Duration: {duration} weeks",
+        "- Prerequisites: {prerequisites}",
+        "- Key Topics: {key_topics}",
+        "- Certification: Upon successful completion, you will receive a {certification_name} certificate.",
+        "Feel free to ask if you have more specific questions about any course!"
+      ]
+    },
+    {
+      "tag": "enrollment",
+      "patterns": [
+        "How can I enroll in a course?",
+        "What is the enrollment process?",
+        "Can you guide me through the course registration?"
+      ],
+      "responses": [
+        "Enrolling in our courses is easy! Here's a step-by-step guide to the enrollment process:",
+        "1. Visit our website and navigate to the 'Courses' section.",
+        "2. Browse through the available courses and choose the one you're interested in.",
+        "3. Click on the 'Enroll Now' button and follow the instructions to create an account if you don't have one.",
+        "4. Complete the registration form and choose your preferred payment method.",
+        "5. Once payment is confirmed, you'll receive access to the course materials and resources.",
+        "If you encounter any issues or have questions during the process, our support team is here to help!"
+      ]
+    },
+    {
+      "tag": "career_paths",
+      "patterns": [
+        "What career paths can these courses lead to?",
+        "Can you tell me about job opportunities after completing a tech course?",
+        "Are there any specific careers associated with your courses?"
+      ],
+      "responses": [
+        "Our tech courses are designed to prepare you for various exciting career paths. Here are some potential career options:",
+        "- AI Specialist or Machine Learning Engineer",
+        "- Full-Stack Developer",
+        "- Cybersecurity Analyst",
+        "- Data Scientist or Analyst",
+        "- Cloud Solutions Architect",
+        "- Mobile App Developer",
+        "- DevOps Engineer",
+        "- UI/UX Designer",
+        "- Blockchain Developer",
+        "- IoT Solutions Architect",
+        "Completing these courses opens up opportunities in industries such as technology, finance, healthcare, and more."
+      ]
+    }
+  ]
+}

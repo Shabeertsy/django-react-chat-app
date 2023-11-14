@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <h4 id="username" class="m-5 text-light" style="width: 100vw;">Username</h4>
+    <div class="input-main">
+
+        <div class="inp-div">
+            <input type="text" class="input" id="username-inp">
+            <button id="join" class="btn btn-warning">join room</button>
+        </div>
+    </div>
+    <div class="main-grid-container">
+        <div id="videocontainer">
+            <div>
+                <video width="200px" height="100%"
+                    style=" margin-top: 30px;border:2px solid #f1924a;margin: 10px;border-radius: 4px;"
+                    id="local-stream" autoplay playsinline>
+                </video>
+            </div>
+            <button id="audio-off" class="btn btn-dark">Audio mute</button>
+            <button id="video-off" class="btn btn-dark pr-4">video off</button>
+        </div>
+
+
+        <div id="chat">
+            <h3>Chat</h3>
+            <div>
+                <input type="text" id="msg-inp" style="margin-right: 5px;"><button style="padding: 4px;" id="send-msg"
+                    class="btn btn-success">send message</button>
+                <!-- <button id="screen-share">screenshare</button> -->
+            </div>
+            <div class="msg-container">
+                <div id="messages">
+                    <ul id="message-list"></ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {{room_name|json_script:"room-name"}}
+    <script type="text/javascript" src="{% static 'main.js' %}"></script>
+</body>
+
+<style>
+    .main-grid-container {
+        display: flex;
+        justify-content: space-evenly;
+    }
+
+    body {
+        background-color: black;
+        color: #fff;
+    }
+
+    .input-main {
+
+        display: flex;
+        justify-content: center;
+        margin: 40px;
+    }
+
+    .msg-container {
+        width: 400px;
+        min-height: 600px;
+        border: 1px solid #fff;
+        margin-top: 5px;
+    }
+
+    #videocontainer {
+        margin-top: 100px;
+    }
+    .group-video{
+        width: 300px;
+        display: flex;
+
+    }
+</style>
+
+</html>

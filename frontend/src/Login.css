@@ -1,0 +1,29 @@
+.login-main{
+    display: flex;
+    justify-content: center;
+    margin-top: 300px;
+}
+
+.login-container{
+    width: 400px;
+    height: 600px;
+}
+.login-container input{
+    margin-top: 20px;
+    width: 400px;
+    height: 30px;
+    border-radius: 4px;
+    padding: 8px;
+}
+.login-container button{
+    margin-top: 10px;
+    width: 80px;
+    height: 40px;
+    background-color: green;
+    border: none;
+    border-radius: 5px;
+}
+.login-container button:hover{
+    background-color: rgb(255, 255, 255);
+    color: green;
+}
