@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-s=8=ty5g(67&*_a*2wg2k&td=6rx4vm+5v36xr*pf_kmccli%x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['crdrops.xyz','localhost']
 
 
 # Application definition
@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'api',
+    # 'api',
     'rest_framework',
     'chat',
     'rest_framework_simplejwt',
@@ -133,6 +133,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
+ASGI_APPLICATION = "lms.asgi.application"
 
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -171,7 +172,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 ### for websocket settings ###
-ASGI_APPLICATION = "lms.asgi.application"
 
 # CHANNEL_LAYERS = {
 #     "default": {
