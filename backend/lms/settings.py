@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-s=8=ty5g(67&*_a*2wg2k&td=6rx4vm+5v36xr*pf_kmccli%x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['crdrops.xyz','localhost']
+ALLOWED_HOSTS = ["crdrops.xyz",'localhost']
 
 
 # Application definition
