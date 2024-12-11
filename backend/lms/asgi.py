@@ -1,31 +1,28 @@
-"""
-ASGI config for lms project.
-
-It exposes the ASGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/3.2/howto/deployment/asgi/
-"""
-
 import os
+import django
 
-from channels.routing import ProtocolTypeRouter,URLRouter
+# Set the settings module for Django
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'lms.settings')
+
+# Initialize Django (necessary before importing models or other Django-specific components)
+django.setup()
+
+from django.conf import settings
+from channels.routing import ProtocolTypeRouter, URLRouter
 from django.core.asgi import get_asgi_application
 from channels.auth import AuthMiddlewareStack
 import chat.routing
-from chat.auth import  TokenAuthMiddleWare 
+from chat.auth import TokenAuthMiddleWare
 
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'lms.settings')
+# Get the ASGI application to handle HTTP requests
 django_asgi_app = get_asgi_application()
 
-
+# Define the ASGI application with WebSocket handling
 application = ProtocolTypeRouter({
-    "http": django_asgi_app,
-    'websocket':TokenAuthMiddleWare(
+    "http": django_asgi_app,  # Handles HTTP requests
+    'websocket': TokenAuthMiddleWare(
         URLRouter(
-            chat.routing.websocket_urlpatterns
+            chat.routing.websocket_urlpatterns  # WebSocket routing
         )
-    )
-    # Just HTTP for now. (We can add other protocols later.)
+    ),
 })
