@@ -167,6 +167,7 @@ CORS_ALLOW_METHODS = [
     "DELETE",
 ]
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 ### for websocket settings ###
