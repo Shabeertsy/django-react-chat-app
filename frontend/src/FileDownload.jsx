@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import './Peer.css'
 import axios from 'axios';
+import baseUrl from './Constant';
+
 
 const FileDownloadComponent = ({ url,file_id }) => {
     const [fileExtension, setFileExtension] = useState()
@@ -15,7 +17,7 @@ const FileDownloadComponent = ({ url,file_id }) => {
 
 
         const onclickImage = () => {
-        axios.get(`http://localhost:8000/download-file/${file_id}/`, { responseType: 'blob' })
+        axios.get(`${baseUrl}/download-file/${file_id}/`, { responseType: 'blob' })
             .then((response) => {
                 const url = window.URL.createObjectURL(new Blob([response.data]));
                 const link = document.createElement('a');
