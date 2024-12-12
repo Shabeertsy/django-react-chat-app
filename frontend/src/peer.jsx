@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import { DataContext } from './SockeProvider';
 import axios from 'axios';
 import FileDownloadComponent from './FileDownload';
+import baseUrl from './Constant';
 
 
 
@@ -13,7 +14,7 @@ function Peer() {
     const { token, user, userId } = useContext(DataContext)
 
 
-    const [socketUrl, setSocketUrl] = useState(`ws://localhost:8000/chat/${id}/?token=${token}`);
+    const [socketUrl, setSocketUrl] = useState(`wss://crdrops.xyz/api/chat/${id}/?token=${token}`);
     const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl);
 
     const [messageHistory, setMessageHistory] = useState([]);
@@ -26,7 +27,7 @@ function Peer() {
 
 
     const getUser = async () => {
-        await axios.get(`http://localhost:8000/get-user/${id}/`).then((res) => {
+        await axios.get(`${baseUrl}/get-user/${id}/`).then((res) => {
             setFriend(res.data)
         })
     }
@@ -45,7 +46,7 @@ function Peer() {
     const handleUpload = () => {
         const formData = new FormData();
         formData.append('file', file);
-        axios.post(`http://localhost:8000/upload-files/${userId}/${id}/`, formData).then((res) => {
+        axios.post(`${baseUrl}/upload-files/${userId}/${id}/`, formData).then((res) => {
         })
     }
 

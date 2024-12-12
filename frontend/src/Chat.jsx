@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import './Chat.css'
+import baseUrl from './Constant'
 
 export default function Chat() {
     const [question, setQuestion] = useState('')
@@ -20,7 +21,6 @@ export default function Chat() {
 
     return (
         <div>
-
             <div className="bot-main">
                 <div className="bot-container">
                     <h2>chat bot</h2>

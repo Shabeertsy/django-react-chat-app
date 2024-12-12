@@ -20,7 +20,7 @@ export default function Home() {
     //   // Add your custom action here
     // }
 
-    axios.get('http://localhost:8000/user-list/').then((res) => {
+    axios.get(`${baseUrl}/user-list/`).then((res) => {
       setList(res.data)
     })
     if (lastMessage !== null) {

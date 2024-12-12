@@ -9,7 +9,7 @@ export const DataProvider = ({ children }) => {
     const [user, setUser] = useState('')
     const [userId, setUserId] = useState('')
     const { sendMessage, lastMessage, readyState } = useWebSocket(
-        token ? `ws://localhost:8000/online/?token=${token}` : null
+        token ? `wss://crdrops.xyz/api/online/?token=${token}` : null
     );
     const [statusList, setStatusList] = useState([])
 

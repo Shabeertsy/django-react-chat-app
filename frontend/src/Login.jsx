@@ -3,6 +3,7 @@ import axios from 'axios'
 import { DataContext } from './SockeProvider'
 import { useNavigate } from 'react-router-dom'
 import './Login.css'
+import baseUrl from './Constant'
 
 
 export default function Login() {
@@ -25,7 +26,7 @@ export default function Login() {
     };
 
     const onSubmit=()=>{
-        axios.post('http://localhost:8000/chat-login/',formData).then((res)=>{
+        axios.post(`${baseUrl}/chat-login/`,formData).then((res)=>{
             setToken(res.data.access)
             if (res.data.access){
                 setUser(res.data.email)
