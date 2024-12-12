@@ -156,6 +156,7 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1)}
 
+CSRF_TRUSTED_ORIGINS = ['https://crdrops.xyz']
 
 
 AUTH_USER_MODEL = 'chat.Profile'
