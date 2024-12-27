@@ -80,7 +80,7 @@ class PersonalChatConsumer(AsyncWebsocketConsumer):
                 if chat_message['msg_type']=='file':
                     chat_id=chat_message['id']
                     chat_obj=await self.get_file_by_id(chat_id)
-                    file_url=f'http://localhost:8000{chat_obj[0].url}'
+                    file_url=f'https://crdrops.xyz/{chat_obj[0].url}'
                     
                     await self.send(text_data=json.dumps({
                     'mode':'file',
