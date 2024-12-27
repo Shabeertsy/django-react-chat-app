@@ -13,7 +13,7 @@ def file_upload_handler(sender, instance, created, **kwargs):
             room_name = f'{instance.chat.sender.id}-{instance.chat.receiver.id}'
         else:
             room_name = f'{instance.chat.receiver.id}-{instance.chat.sender.id}'
-        file_url=f'http://localhost:8000{instance.file_data.url}'
+        file_url=f'https://crdrops.xyz/{instance.file_data.url}'
         message_li={
             'mode':'file',
             'message':'',
