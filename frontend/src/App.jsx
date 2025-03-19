@@ -19,6 +19,7 @@ function App() {
       <Route path='/login' element={<Login/>}/>
       <Route path='/file' element={<FileDownloadComponent/>}/>
       <Route path='/bot' element={<Chat/>}/>
+      <Route path='/chat' element={<Home/>}/>
 
   </Routes>
     </>
