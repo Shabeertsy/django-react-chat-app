@@ -11,16 +11,25 @@ export default function Products() {
   ];
 
   return (
-    <section className="py-12">
-      <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold mb-8">Best Selling Products</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <section className="py-16 bg-gray-100">
+      <div className="container mx-auto px-8">
+        <h2 className="text-4xl font-bold text-center mb-12 text-gray-800">Best Selling Products</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
           {products.map((product) => (
-            <div key={product.id} className="bg-white shadow-md rounded-lg p-4">
-              <img src={product.image} alt={product.name} className="w-full h-48 object-cover mb-4" />
-              <h3 className="text-lg font-semibold mb-2">{product.name}</h3>
-              <p className="text-primary font-bold">{product.price}</p>
-              <button className="bg-primary text-white px-4 py-2 mt-4 rounded-full">Add to Cart</button>
+            <div key={product.id} className="bg-white rounded-3xl shadow-xl overflow-hidden transform transition duration-300 hover:scale-105">
+              {/* Image Box with Better Fill and Quality */}
+              <div className="relative w-full h-56 rounded-t-3xl overflow-hidden">
+                <img src={product.image} alt={product.name} className="w-full h-full object-cover object-center" />
+              </div>
+
+              {/* Product Details */}
+              <div className="p-6 text-center">
+                <h3 className="text-xl font-semibold text-gray-700 mb-2">{product.name}</h3>
+                <p className="text-primary font-bold text-2xl">{product.price}</p>
+                <button className="mt-5 bg-primary text-black px-6 py-3 rounded-full shadow-lg transition hover:bg-opacity-80">
+                  Add to Cart
+                </button>
+              </div>
             </div>
           ))}
         </div>
