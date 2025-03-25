@@ -1,0 +1,15 @@
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #004d00;
+    color: white;
+    padding: 15px 0;
+    z-index: 50; /* Ensures it stays on top */
+  }
+  .nav-head {
+    margin-top: 0;
+    padding-top: 0;
+  }
+  
