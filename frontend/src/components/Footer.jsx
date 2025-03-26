@@ -4,7 +4,7 @@ export default function Footer() {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
-              <img src="/images/logo.svg" alt="Logo" className="h-12 mb-4" />
+              {/* <img src="/images/logo.svg" alt="Logo" className="h-12 mb-4" /> */}
               <div className="flex space-x-4">
                 <a href="#" className="text-white hover:text-primary">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
