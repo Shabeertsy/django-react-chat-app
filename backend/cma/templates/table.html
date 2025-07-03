@@ -263,16 +263,17 @@
   font-weight: 600;
   color: var(--accent);
 }
-
-
   </style>
 </head>
+
+
+
 <body>
   <div class="container">
     <div class="welcome-row">
       <div class="welcome">Welcome to Isha's Exam Dashboard</div>
       <div class="exam-card"> Exam Date: <strong>October 15</strong></div>
-      <div class="exam-card"> Revision Starts: <strong>September 1</strong></div>
+      <div class="exam-card" style="margin-top:10px;"> Revision Starts: <strong>September 1</strong></div>
     </div>
 
     <div class="cards">
@@ -280,6 +281,8 @@
         <h3>Today</h3>
         <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_Cc8Bpg.json" background="transparent" speed="1" style="width: 100px; height: 60px;" loop autoplay></lottie-player>
         <p id="current-date">--</p>
+        <p id="greeting-text" style="font-size: 1.1rem; margin-top: 0.2rem;"></p>
+
       </div>
     <div class="card">
     <h3>Days Remaining</h3>
@@ -296,19 +299,16 @@
   </lottie-player>
 
   <!-- Progress Bar -->
-<div class="progress-bar-container">
-  <div class="progress-bar-bg">
-    <div class="progress-bar-fill" id="progressFill"></div>
-  </div>
-  <div class="progress-text" id="wasted-percent">63%</div>
-</div>
-
-</div>
-
-
-
-
+    <div class="progress-bar-container">
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressFill"></div>
+      </div>
+      <div class="progress-text" id="wasted-percent">10%</div>
     </div>
+    </div>
+    </div>
+
+
 
     <div class="table-controls">
       <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
@@ -340,7 +340,10 @@
 <div id="modal" class="modal">
   <div class="modal-content">
     <span class="close" onclick="closeModal()">&times;</span>
-    <h3 id="modal-title">Add Task</h3>
+    <div style="text-align: center; margin-bottom: 1rem;">
+      <h2 id="modal-title">Add Task</h2>
+      <p>Section: <span id="current-section">A</span></p>
+    </div>
 
     <!-- CLASS FORM -->
     <form id="class-form" method="POST" action="{% url 'add_task' %}">
@@ -350,18 +353,19 @@
       <input type="text" name="comments" placeholder="Remarks" />
       <input type="hidden" name="section" id="section-input" value="A" />
       <input type="hidden" name="class_name" value="classes" />
-      <input type="date" name="date" placeholder="Due Date" />
+      <input type="date" name="due_date" placeholder="Due Date" />
       <button type="submit">Save Class</button>
     </form>
 
     <!-- QUESTION FORM -->
     <form id="question-form" method="POST" action="{% url 'add_questions' %}" style="display: none;">
       {% csrf_token %}
+      <input type="text" name="unit" placeholder="Unit" required />
       <input type="number" name="number_of_questions" placeholder="No. of Questions" required />
       <input type="number" name="number_of_essay_questions" placeholder="No. of Essay Questions" />
       <input type="hidden" name="section" id="question-section" value="A" />
       <input type="hidden" name="class_name" value="questions" />
-      <input type="date" name="date" placeholder="Date" />
+      <input type="due_date" name="date" placeholder="Date" />
       <button type="submit">Save Question</button>
     </form>
   </div>
@@ -372,24 +376,13 @@
     let currentTab = 'classes';
     let currentSection = 'A';
     let editIndex = null;
-let fetchedData = {
-  classes: { A: [], B: [], C: [], D: [], E: [], F: [] },
-  questions: { A: [], B: [], C: [], D: [], E: [], F: [] }
-};
+    let fetchedData = {
+      classes: { A: [], B: [], C: [], D: [], E: [], F: [] },
+      questions: { A: [], B: [], C: [], D: [], E: [], F: [] }
+    };
 
-    {% comment %} const data = {
-      classes: {
-        A: [["Math", "Ms. Priya", "8 AM"]],
-        B: [["English", "Mrs. Rita", "9 AM"]],
-        C: [], D: [], E: [], F: []
-      },
-      questions: {
-        A: [["Q1", "Physics", "10 Marks"]],
-        B: [["Q2", "Chemistry", "8 Marks"]],
-        C: [], D: [], E: [], F: []
-      }
-    }; {% endcomment %}
 
+    // Fetch initial data
     function fetchDataAndRender() {
       fetch('get-tasks/')
         .then(response => response.json())
@@ -414,54 +407,66 @@ let fetchedData = {
       currentSection = section;
       document.querySelectorAll('.sec-btn').forEach(b => b.classList.remove('active'));
       e.target.classList.add('active');
+      document.getElementById("current-section").textContent = currentSection;
+      document.getElementById("section-input").value = currentSection;
+      document.getElementById("question-section").value = currentSection;
       renderTable();
     }
 
     
     fetchDataAndRender()
     
-    function renderTable() {
+      function renderTable() {
       const rows = fetchedData[currentTab][currentSection];
-      console.log(rows,'rows')
-      const head = currentTab === 'classes' ? "<th>Unit</th><th>Chapter</th><th>Remark</th><th>Due Date</th><th>Status</th>" : "<th>Unit</th><th>Number Of Questions Completed</th><th>Essay Questions Completed</th><th>Due Date</th><th>Total Number of Questions</th><th>Total Number of Essay Questions</th><th>Pendging que</th><th>Pending Essay Que</th>";
+      const head = currentTab === 'classes'
+        ? "<th>Unit</th><th>Chapter</th><th>Remark</th><th>Due Date</th><th>Status</th><th>id</th>"
+        : "<th>Unit</th><th>Total Questions</th><th>Total Essay Questions</th><th>Due Date</th><th>Questions Completed</th><th>Essay Completed</th><th>Pending</th><th>Pending Essay</th><th>id</th>";
+
       let html = `<table><thead><tr>${head}<th>Actions</th></tr></thead><tbody>`;
+      
       if (!rows.length) {
-        html += `<tr><td colspan="6">No data in Section ${currentSection}</td></tr>`;
+        html += `<tr><td colspan="100%">No data in Section ${currentSection}</td></tr>`;
       } else {
         rows.forEach((row, i) => {
+          const id = row[row.length - 1];
+          const statusIndex = currentTab === 'classes' ? 4 : null;
+          let statusCell = "";
+
+          if (currentTab === "classes") {
+            const status = row[statusIndex]?.toLowerCase();
+            const statusBox = status === "completed"
+              ? `<span style="background:#16a34a;padding:4px 10px;border-radius:6px;color:white;">Completed</span>`
+              : `<span style="background:#facc15;padding:4px 10px;border-radius:6px;color:black;">Pending</span>`;
+            
+            row[statusIndex] = statusBox;
+          }
+
           html += `<tr>${row.map(cell => `<td>${cell}</td>`).join("")}
             <td>
               <button class="btn-action" onclick="editEntry(${i})">✏️</button>
               <button class="btn-action" onclick="deleteEntry(${i})">🗑️</button>
-            </td></tr>`;
+              ${currentTab === 'classes' ? `<button class="btn-action" onclick="markAsCompleted(${i})">✅</button>` : ''}
+            </td>
+          </tr>`;
         });
       }
+
       html += "</tbody></table>";
       document.getElementById("dynamic-table").innerHTML = html;
     }
 
+    function openModal() {
+      document.getElementById("modal").style.display = "flex";
+      document.getElementById("modal-title").innerText = currentTab === "classes" ? "Add Class Task" : "Add Questions";
 
-    {% comment %} function openModal() {
-    document.getElementById("modal").style.display = "flex";
-    document.getElementById("modal-title").innerText = "Add Task";
-    document.querySelector("#modal input[name='title']").value = "";
-    document.querySelector("#modal input[name='description']").value = "";
-    document.querySelector("#modal input[name='comments']").value = "";
-    document.getElementById("section-input").value = currentSection;
-  }
-   {% endcomment %}
-  function openModal() {
-  document.getElementById("modal").style.display = "flex";
-  document.getElementById("modal-title").innerText = currentTab === "classes" ? "Add Class Task" : "Add Questions";
+      // Set correct section value
+      document.getElementById("section-input").value = currentSection;
+      document.getElementById("question-section").value = currentSection;
 
-  // Set correct section value
-  document.getElementById("section-input").value = currentSection;
-  document.getElementById("question-section").value = currentSection;
-
-  // Show appropriate form
-  document.getElementById("class-form").style.display = currentTab === "classes" ? "block" : "none";
-  document.getElementById("question-form").style.display = currentTab === "questions" ? "block" : "none";
-}
+      // Show appropriate form
+      document.getElementById("class-form").style.display = currentTab === "classes" ? "block" : "none";
+      document.getElementById("question-form").style.display = currentTab === "questions" ? "block" : "none";
+    }
 
 
     function closeModal() {
@@ -491,29 +496,64 @@ let fetchedData = {
       document.getElementById("modal").style.display = "flex";
     }
 
+    
+
     function deleteEntry(index) {
-      data[currentTab][currentSection].splice(index, 1);
-      renderTable();
+      const row = fetchedData[currentTab][currentSection][index];
+      const id = row[row.length - 1]; // assuming ID is last item in row
+
+      const cleanId = String(id).trim();
+      console.log("Deleting ID:", cleanId);
+      const url = currentTab === "classes"
+        ? `/api/cma/delete-task/${cleanId}/`
+        : `/api/cma/delete-question/${cleanId}/`;
+
+      fetch(url, { method: "GET" })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            fetchedData[currentTab][currentSection].splice(index, 1);
+            renderTable();
+          } else {
+            alert("Failed to delete.");
+          }
+        })
+        .catch(error => {
+          console.error("Delete error:", error);
+        });
     }
 
+
+
+
     // Date Logic
-const today = new Date();
-const examDate = new Date("2025-10-15");
-const revision_date = new Date("2025-9-1");
-const msPerDay = 1000 * 60 * 60 * 24;
+    const today = new Date();
+    const examDate = new Date("2025-10-15");
+    const revision_date = new Date("2025-9-1");
+    const msPerDay = 1000 * 60 * 60 * 24;
 
-const totalDays = Math.ceil((examDate - new Date("2025-01-01")) / msPerDay);
-const daysRemaining = Math.ceil((revision_date - today) / msPerDay);
-document.getElementById("days-remaining").textContent = daysRemaining + " days";
+    const totalDays = Math.ceil((examDate - new Date("2025-01-01")) / msPerDay);
+    const daysRemaining = Math.ceil((revision_date - today) / msPerDay);
+    document.getElementById("days-remaining").textContent = daysRemaining + " days";
 
-document.getElementById("current-date").textContent = today.toLocaleDateString("en-US", {
-  weekday: "long", year: "numeric", month: "short", day: "numeric"
-});
+    document.getElementById("current-date").textContent = today.toLocaleDateString("en-US", {
+      weekday: "long", year: "numeric", month: "short", day: "numeric"
+    });
 
-document.getElementById("progressFill").style.width = '60' + "%";
+    document.getElementById("progressFill").style.width = '60' + "%";
 
 
+    // Time-based Greeting
+    function getGreeting() {
+      const hour = new Date().getHours();
+      if (hour < 12) return "Good Morning ☀️";
+      if (hour < 18) return "Good Afternoon 🌤️";
+      return "Good Evening 🌙";
+    }
 
+    document.getElementById("greeting-text").textContent = getGreeting();
+
+ 
   </script>
 </body>
 </html>

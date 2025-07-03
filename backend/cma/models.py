@@ -32,5 +32,5 @@ class QuestionsCompleted(models.Model):
     number_of_essay_questions = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"Question for {self.section}: {self.unit[:50]}"
+        return f"Question for {self.section}: {self.unit}"
     
