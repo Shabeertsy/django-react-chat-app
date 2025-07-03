@@ -1,0 +1,519 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Isha's Exam Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;700&display=swap" rel="stylesheet" />
+
+
+  <style>
+    :root {
+      --bg: #0f172a;
+      --glass: rgba(255, 255, 255, 0.05);
+      --border: rgba(255, 255, 255, 0.1);
+      --text: #f9f9f4;
+      --subtext: #facc15;
+      --accent: #fbbf24;
+      --accent-hover: #f59e0b;
+      --shadow: 0 8px 20px rgba(251, 191, 36, 0.3);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 2rem;
+    }
+
+    .welcome-row {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+
+    .welcome {
+      font-size: 2.4rem;
+      font-weight: 700;
+      background: linear-gradient(to right, #fcd34d, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .exam-card {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      padding: 0.75rem 1.2rem;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-size: 0.95rem;
+      font-weight: 500;
+      box-shadow: var(--shadow);
+    }
+
+    .cards {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+      flex-wrap: wrap;
+    }
+
+ .card {
+  flex: 1;
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;     /* center horizontally */
+  justify-content: center; /* center vertically */
+  backdrop-filter: blur(12px);
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  transition: transform 0.3s;
+  text-align: center;
+}
+
+.card p {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--accent);
+  font-family: 'Rubik', sans-serif;
+  margin-top: 0.5rem;
+}
+
+
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 0 15px rgba(251, 191, 36, 0.4);
+    }
+
+    .card h3 {
+      font-size: 0.95rem;
+      color: var(--subtext);
+      font-weight: 500;
+    }
+
+    .tab-btn, .sec-btn {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      color: var(--text);
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .tab-btn:hover, .sec-btn:hover {
+      background: var(--accent);
+      transform: translateY(-2px);
+      color: black;
+    }
+
+    .tab-btn.active, .sec-btn.active {
+      background: var(--accent);
+      color: black;
+    }
+
+    .table-controls {
+      margin-bottom: 1.5rem;
+    }
+
+    .table-section {
+      background: var(--glass);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 2rem;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      text-align: left;
+      color: var(--subtext);
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+
+    .btn-action {
+      background: transparent;
+      border: none;
+      color: var(--accent);
+      font-size: 1rem;
+      cursor: pointer;
+      margin-right: 0.5rem;
+    }
+
+    .btn-action:hover {
+      color: var(--accent-hover);
+    }
+
+
+    .modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 99;
+}
+
+
+    .modal-content {
+      background: #1e293b;
+      padding: 2rem;
+      border-radius: 12px;
+      width: 400px;
+      border: 1px solid var(--border);
+      position: relative;
+      color: white;
+    }
+
+    .modal-content input {
+      width: 100%;
+      margin-bottom: 1rem;
+      padding: 0.7rem;
+      border-radius: 8px;
+      background: #0f172a;
+      border: 1px solid var(--border);
+      color: white;
+    }
+
+    .modal-content button {
+      background: var(--accent);
+      color: black;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .modal-content button:hover {
+      background: var(--accent-hover);
+    }
+
+    .close {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      font-size: 1.3rem;
+      cursor: pointer;
+      color: var(--subtext);
+    }
+
+    .close:hover {
+      color: white;
+    }
+
+
+.progress-bar-container {
+  width: 100%;
+  margin-top: 1rem;
+  position: relative;
+  text-align: center;
+}
+
+.progress-bar-bg {
+  width: 80%;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  width: 0;
+  background: var(--accent);
+  border-radius: 6px;
+  transition: width 1s ease-in-out;
+}
+
+.progress-text {
+  margin-top: 0.5rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="welcome-row">
+      <div class="welcome">Welcome to Isha's Exam Dashboard</div>
+      <div class="exam-card"> Exam Date: <strong>October 15</strong></div>
+      <div class="exam-card"> Revision Starts: <strong>September 1</strong></div>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <h3>Today</h3>
+        <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_Cc8Bpg.json" background="transparent" speed="1" style="width: 100px; height: 60px;" loop autoplay></lottie-player>
+        <p id="current-date">--</p>
+      </div>
+    <div class="card">
+    <h3>Days Remaining</h3>
+    <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_pprxh53t.json" background="transparent" speed="1" style="width: 100px; height: 60px;" loop autoplay></lottie-player>
+    <p id="days-remaining">100</p>
+  </div>
+
+<div class="card">
+  <h3>Progress</h3>
+  
+  <!-- Center Lottie -->
+  <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_jtbfg2nb.json"
+    background="transparent" speed="1" style="width: 100px; height: 100px;" loop autoplay>
+  </lottie-player>
+
+  <!-- Progress Bar -->
+<div class="progress-bar-container">
+  <div class="progress-bar-bg">
+    <div class="progress-bar-fill" id="progressFill"></div>
+  </div>
+  <div class="progress-text" id="wasted-percent">63%</div>
+</div>
+
+</div>
+
+
+
+
+    </div>
+
+    <div class="table-controls">
+      <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <button class="tab-btn active" onclick="switchTab('classes', event)">Classes</button>
+          <button class="tab-btn" onclick="switchTab('questions', event)">Questions</button>
+          <div style="margin-top: 1rem;">
+            <button class="sec-btn active" onclick="switchSection('A', event)">Section A</button>
+            <button class="sec-btn" onclick="switchSection('B', event)">B</button>
+            <button class="sec-btn" onclick="switchSection('C', event)">C</button>
+            <button class="sec-btn" onclick="switchSection('D', event)">D</button>
+            <button class="sec-btn" onclick="switchSection('E', event)">E</button>
+            <button class="sec-btn" onclick="switchSection('F', event)">F</button>
+          </div>
+        </div>
+        <div>
+          <button class="tab-btn" onclick="openModal()">+ Add</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-section">
+      <div id="dynamic-table"></div>
+    </div>
+  </div>
+
+
+  <!-- Modal -->
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h3 id="modal-title">Add Task</h3>
+
+    <!-- CLASS FORM -->
+    <form id="class-form" method="POST" action="{% url 'add_task' %}">
+      {% csrf_token %}
+      <input type="text" name="unit" placeholder="Unit" required />
+      <input type="text" name="chapter" placeholder="Chapter" />
+      <input type="text" name="comments" placeholder="Remarks" />
+      <input type="hidden" name="section" id="section-input" value="A" />
+      <input type="hidden" name="class_name" value="classes" />
+      <input type="date" name="date" placeholder="Due Date" />
+      <button type="submit">Save Class</button>
+    </form>
+
+    <!-- QUESTION FORM -->
+    <form id="question-form" method="POST" action="{% url 'add_questions' %}" style="display: none;">
+      {% csrf_token %}
+      <input type="number" name="number_of_questions" placeholder="No. of Questions" required />
+      <input type="number" name="number_of_essay_questions" placeholder="No. of Essay Questions" />
+      <input type="hidden" name="section" id="question-section" value="A" />
+      <input type="hidden" name="class_name" value="questions" />
+      <input type="date" name="date" placeholder="Date" />
+      <button type="submit">Save Question</button>
+    </form>
+  </div>
+</div>
+
+
+  <script>
+    let currentTab = 'classes';
+    let currentSection = 'A';
+    let editIndex = null;
+let fetchedData = {
+  classes: { A: [], B: [], C: [], D: [], E: [], F: [] },
+  questions: { A: [], B: [], C: [], D: [], E: [], F: [] }
+};
+
+    {% comment %} const data = {
+      classes: {
+        A: [["Math", "Ms. Priya", "8 AM"]],
+        B: [["English", "Mrs. Rita", "9 AM"]],
+        C: [], D: [], E: [], F: []
+      },
+      questions: {
+        A: [["Q1", "Physics", "10 Marks"]],
+        B: [["Q2", "Chemistry", "8 Marks"]],
+        C: [], D: [], E: [], F: []
+      }
+    }; {% endcomment %}
+
+    function fetchDataAndRender() {
+      fetch('get-tasks/')
+        .then(response => response.json())
+        .then(data => {
+          console.log(data, 'fetched data');
+          fetchedData = data;
+          renderTable();
+        })
+        .catch(error => {
+          console.error('Error fetching data:', error);
+        });
+    }
+
+    function switchTab(tab, e) {
+      currentTab = tab;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      renderTable();
+    }
+
+    function switchSection(section, e) {
+      currentSection = section;
+      document.querySelectorAll('.sec-btn').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      renderTable();
+    }
+
+    
+    fetchDataAndRender()
+    
+    function renderTable() {
+      const rows = fetchedData[currentTab][currentSection];
+      console.log(rows,'rows')
+      const head = currentTab === 'classes' ? "<th>Unit</th><th>Chapter</th><th>Remark</th><th>Due Date</th><th>Status</th>" : "<th>Unit</th><th>Number Of Questions Completed</th><th>Essay Questions Completed</th><th>Due Date</th><th>Total Number of Questions</th><th>Total Number of Essay Questions</th><th>Pendging que</th><th>Pending Essay Que</th>";
+      let html = `<table><thead><tr>${head}<th>Actions</th></tr></thead><tbody>`;
+      if (!rows.length) {
+        html += `<tr><td colspan="6">No data in Section ${currentSection}</td></tr>`;
+      } else {
+        rows.forEach((row, i) => {
+          html += `<tr>${row.map(cell => `<td>${cell}</td>`).join("")}
+            <td>
+              <button class="btn-action" onclick="editEntry(${i})">✏️</button>
+              <button class="btn-action" onclick="deleteEntry(${i})">🗑️</button>
+            </td></tr>`;
+        });
+      }
+      html += "</tbody></table>";
+      document.getElementById("dynamic-table").innerHTML = html;
+    }
+
+
+    {% comment %} function openModal() {
+    document.getElementById("modal").style.display = "flex";
+    document.getElementById("modal-title").innerText = "Add Task";
+    document.querySelector("#modal input[name='title']").value = "";
+    document.querySelector("#modal input[name='description']").value = "";
+    document.querySelector("#modal input[name='comments']").value = "";
+    document.getElementById("section-input").value = currentSection;
+  }
+   {% endcomment %}
+  function openModal() {
+  document.getElementById("modal").style.display = "flex";
+  document.getElementById("modal-title").innerText = currentTab === "classes" ? "Add Class Task" : "Add Questions";
+
+  // Set correct section value
+  document.getElementById("section-input").value = currentSection;
+  document.getElementById("question-section").value = currentSection;
+
+  // Show appropriate form
+  document.getElementById("class-form").style.display = currentTab === "classes" ? "block" : "none";
+  document.getElementById("question-form").style.display = currentTab === "questions" ? "block" : "none";
+}
+
+
+    function closeModal() {
+      document.getElementById("modal").style.display = "none";
+    }
+
+    function saveEntry() {
+      const i1 = document.getElementById("input1").value;
+      const i2 = document.getElementById("input2").value;
+      const i3 = document.getElementById("input3").value;
+      if (editIndex !== null) {
+        data[currentTab][currentSection][editIndex] = [i1, i2, i3];
+      } else {
+        data[currentTab][currentSection].push([i1, i2, i3]);
+      }
+      closeModal();
+      renderTable();
+    }
+
+    function editEntry(index) {
+      editIndex = index;
+      const row = data[currentTab][currentSection][index];
+      document.getElementById("input1").value = row[0];
+      document.getElementById("input2").value = row[1];
+      document.getElementById("input3").value = row[2];
+      document.getElementById("modal-title").innerText = "Edit Entry";
+      document.getElementById("modal").style.display = "flex";
+    }
+
+    function deleteEntry(index) {
+      data[currentTab][currentSection].splice(index, 1);
+      renderTable();
+    }
+
+    // Date Logic
+const today = new Date();
+const examDate = new Date("2025-10-15");
+const revision_date = new Date("2025-9-1");
+const msPerDay = 1000 * 60 * 60 * 24;
+
+const totalDays = Math.ceil((examDate - new Date("2025-01-01")) / msPerDay);
+const daysRemaining = Math.ceil((revision_date - today) / msPerDay);
+document.getElementById("days-remaining").textContent = daysRemaining + " days";
+
+document.getElementById("current-date").textContent = today.toLocaleDateString("en-US", {
+  weekday: "long", year: "numeric", month: "short", day: "numeric"
+});
+
+document.getElementById("progressFill").style.width = '60' + "%";
+
+
+
+  </script>
+</body>
+</html>

@@ -39,7 +39,7 @@ class BaseClass(models.Model):
 
 class Profile(AbstractUser):
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['username']
 
     profile_image = models.ImageField(null=True,blank=True,upload_to='profile_images')
     email=models.EmailField(unique=True)
