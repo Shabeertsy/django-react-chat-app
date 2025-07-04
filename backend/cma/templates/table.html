@@ -358,16 +358,21 @@
     </form>
 
     <!-- QUESTION FORM -->
-    <form id="question-form" method="POST" action="{% url 'add_questions' %}" style="display: none;">
-      {% csrf_token %}
-      <input type="text" name="unit" placeholder="Unit" required />
-      <input type="number" name="number_of_questions" placeholder="No. of Questions" required />
-      <input type="number" name="number_of_essay_questions" placeholder="No. of Essay Questions" />
-      <input type="hidden" name="section" id="question-section" value="A" />
-      <input type="hidden" name="class_name" value="questions" />
-      <input type="due_date" name="date" placeholder="Date" />
-      <button type="submit">Save Question</button>
-    </form>
+ <form id="question-form" method="POST" action="{% url 'add_questions' %}" style="display: none;">
+  {% csrf_token %}
+  <input type="text" name="unit" placeholder="Unit" required />
+  <input type="number" name="number_of_questions" placeholder="No. of Questions" required />
+  <input type="number" name="number_of_essay_questions" placeholder="No. of Essay Questions" />
+  <input type="hidden" name="section" id="question-section" value="A" />
+  <input type="date" name="date" placeholder="Date" />
+
+  <!-- These two are hidden by default -->
+  <input type="number" name="questions_completed" placeholder="Questions Completed" style="display: none;" />
+  <input type="number" name="essay_completed" placeholder="Essay Questions Completed" style="display: none;" />
+
+  <button type="submit">Save Question</button>
+</form>
+
   </div>
 </div>
 
@@ -415,58 +420,88 @@
 
     
     fetchDataAndRender()
-    
-      function renderTable() {
-      const rows = fetchedData[currentTab][currentSection];
-      const head = currentTab === 'classes'
-        ? "<th>Unit</th><th>Chapter</th><th>Remark</th><th>Due Date</th><th>Status</th><th>id</th>"
-        : "<th>Unit</th><th>Total Questions</th><th>Total Essay Questions</th><th>Due Date</th><th>Questions Completed</th><th>Essay Completed</th><th>Pending</th><th>Pending Essay</th><th>id</th>";
 
-      let html = `<table><thead><tr>${head}<th>Actions</th></tr></thead><tbody>`;
-      
-      if (!rows.length) {
-        html += `<tr><td colspan="100%">No data in Section ${currentSection}</td></tr>`;
-      } else {
-        rows.forEach((row, i) => {
-          const id = row[row.length - 1];
-          const statusIndex = currentTab === 'classes' ? 4 : null;
-          let statusCell = "";
 
-          if (currentTab === "classes") {
-            const status = row[statusIndex]?.toLowerCase();
-            const statusBox = status === "completed"
-              ? `<span style="background:#16a34a;padding:4px 10px;border-radius:6px;color:white;">Completed</span>`
-              : `<span style="background:#facc15;padding:4px 10px;border-radius:6px;color:black;">Pending</span>`;
-            
-            row[statusIndex] = statusBox;
-          }
+    function renderStatusCell(status) {
+  if (typeof status !== "string") return status;
+  const lower = status.toLowerCase();
+  console.log("Rendering status cell for:", lower);
+  if (lower === "completed") {
+    return `<span style="background:#16a34a;padding:4px 10px;border-radius:6px;color:white;">Completed</span>`;
+  }
+  return `<span style="background:#facc15;padding:4px 10px;border-radius:6px;color:black;">Pending</span>`;
+}
 
-          html += `<tr>${row.map(cell => `<td>${cell}</td>`).join("")}
-            <td>
-              <button class="btn-action" onclick="editEntry(${i})">✏️</button>
-              <button class="btn-action" onclick="deleteEntry(${i})">🗑️</button>
-              ${currentTab === 'classes' ? `<button class="btn-action" onclick="markAsCompleted(${i})">✅</button>` : ''}
-            </td>
-          </tr>`;
-        });
+function renderTable() {
+  const rows = fetchedData[currentTab][currentSection];
+  const head = currentTab === 'classes'
+    ? "<th>Unit</th><th>Chapter</th><th>Remark</th><th>Due Date</th><th>Status</th><th>id</th>"
+    : "<th>Unit</th><th>Total Questions</th><th>Total Essay Questions</th><th>Due Date</th><th>Questions Completed</th><th>Essay Completed</th><th>Pending</th><th>Pending Essay</th><th>id</th>";
+
+  let html = `<table><thead><tr>${head}<th>Actions</th></tr></thead><tbody>`;
+
+  if (!rows.length) {
+    html += `<tr><td colspan="100%">No data in Section ${currentSection}</td></tr>`;
+  } else {
+    rows.forEach((row, i) => {
+      const id = row[row.length - 1];
+      const statusIndex = currentTab === 'classes' ? 4 : null;
+
+      const cells = row.map((cell, idx) => {
+      if (currentTab === 'classes' && idx === statusIndex) {
+        return `<td>${renderStatusCell(cell)}</td>`;
       }
+      if (currentTab === 'questions' && (idx === 6 || idx === 7)) {
+        return `<td><span style="background:#facc15;padding:4px 10px;border-radius:6px;color:black;">${cell}</span></td>`;
+      }
+      return `<td>${cell}</td>`;
+    });
 
-      html += "</tbody></table>";
-      document.getElementById("dynamic-table").innerHTML = html;
-    }
+      html += `<tr>${cells.join("")}
+        <td>
+          ${currentTab === 'classes' ? `<button class="btn-action" onclick="markAsCompleted(${i})">✅</button>` : ''}
+          <button class="btn-action" onclick="editEntry(${i})">✏️</button>
+          <button class="btn-action" onclick="deleteEntry(${i})">🗑️</button>
+        </td>
+      </tr>`;
+    });
+  }
 
-    function openModal() {
-      document.getElementById("modal").style.display = "flex";
-      document.getElementById("modal-title").innerText = currentTab === "classes" ? "Add Class Task" : "Add Questions";
+  html += "</tbody></table>";
+  document.getElementById("dynamic-table").innerHTML = html;
+}
 
-      // Set correct section value
-      document.getElementById("section-input").value = currentSection;
-      document.getElementById("question-section").value = currentSection;
 
-      // Show appropriate form
-      document.getElementById("class-form").style.display = currentTab === "classes" ? "block" : "none";
-      document.getElementById("question-form").style.display = currentTab === "questions" ? "block" : "none";
-    }
+
+function openModal() {
+  document.getElementById("modal").style.display = "flex";
+  document.getElementById("modal-title").innerText = currentTab === "classes" ? "Add Class Task" : "Add Questions";
+
+  editIndex = null;
+
+  document.getElementById("section-input").value = currentSection;
+  document.getElementById("question-section").value = currentSection;
+
+  const classForm = document.getElementById("class-form");
+  const questionForm = document.getElementById("question-form");
+
+  if (currentTab === "classes") {
+    classForm.style.display = "block";
+    questionForm.style.display = "none";
+    classForm.reset();
+    classForm.action = "{% url 'add_task' %}";
+  } else {
+    classForm.style.display = "none";
+    questionForm.style.display = "block";
+    questionForm.reset();
+    questionForm.action = "{% url 'add_questions' %}";
+
+    // Hide completed fields during add
+    questionForm.querySelector("[name='questions_completed']").style.display = "none";
+    questionForm.querySelector("[name='essay_completed']").style.display = "none";
+  }
+}
+
 
 
     function closeModal() {
@@ -486,23 +521,14 @@
       renderTable();
     }
 
-    function editEntry(index) {
-      editIndex = index;
-      const row = data[currentTab][currentSection][index];
-      document.getElementById("input1").value = row[0];
-      document.getElementById("input2").value = row[1];
-      document.getElementById("input3").value = row[2];
-      document.getElementById("modal-title").innerText = "Edit Entry";
-      document.getElementById("modal").style.display = "flex";
-    }
-
-    
 
     function deleteEntry(index) {
       const row = fetchedData[currentTab][currentSection][index];
       const id = row[row.length - 1]; // assuming ID is last item in row
-
       const cleanId = String(id).trim();
+
+      const confirmDelete = confirm("Are you sure you want to delete this entry?");
+      if (!confirmDelete) return;
       console.log("Deleting ID:", cleanId);
       const url = currentTab === "classes"
         ? `/api/cma/delete-task/${cleanId}/`
@@ -523,7 +549,35 @@
         });
     }
 
+    
+    function markAsCompleted(index) {
+      const row = fetchedData[currentTab][currentSection][index];
+      const id = row[row.length - 1]; // assuming ID is last item in row
 
+      const cleanId = String(id).trim();
+      console.log("Marking as completed ID:", cleanId);
+      const url = `/api/cma/mark-task-completed/${cleanId}/`;
+
+      fetch(url, { method: "GET" })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+                  if (data.status === "Completed") {
+          fetchedData[currentTab][currentSection][index][4] = "Completed";
+
+        } else {
+          fetchedData[currentTab][currentSection][index][4] = "Pending";
+
+        }
+            renderTable();
+          } else {
+            alert("Failed to mark as completed.");
+          }
+        })
+        .catch(error => {
+          console.error("Mark as completed error:", error);
+        });
+    }
 
 
     // Date Logic
@@ -541,6 +595,43 @@
     });
 
     document.getElementById("progressFill").style.width = '60' + "%";
+
+
+function editEntry(index) {
+  editIndex = index;
+  const row = fetchedData[currentTab][currentSection][index];
+  openModal();
+
+  document.getElementById("modal-title").innerText = "Update Progress";
+
+  const id = row[row.length - 1].trim();
+
+  if (currentTab === "questions") {
+    const form = document.getElementById("question-form");
+
+    form.querySelector("[name='unit']").style.display = "none";
+    form.querySelector("[name='number_of_questions']").style.display = "none";
+    form.querySelector("[name='number_of_essay_questions']").style.display = "none";
+    form.querySelector("[name='date']").style.display = "none";
+
+    // Show completed fields only during edit
+    
+
+    form.querySelector("[name='unit']").required = false;
+    form.querySelector("[name='number_of_questions']").required = false;
+    form.querySelector("[name='number_of_essay_questions']").required = false;
+    form.querySelector("[name='date']").required = false;
+
+    form.querySelector("[name='questions_completed']").style.display = "block";
+    form.querySelector("[name='essay_completed']").style.display = "block";
+
+    form.querySelector("[name='questions_completed']").value = row[4] || 0;
+    form.querySelector("[name='essay_completed']").value = row[5] || 0;
+
+    form.action = `/api/cma/update-question-progress/${id}/`;
+  }
+}
+
 
 
     // Time-based Greeting

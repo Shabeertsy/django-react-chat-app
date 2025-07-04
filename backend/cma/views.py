@@ -96,6 +96,47 @@ def delete_question(request, question_id):
 
 
 
+def mark_task_completed(request, pk):
+    try:
+        task = Task.objects.get(pk=pk)
+        task.is_completed = True if not task.is_completed else False  # Toggle completion status
+        task.save()
+        return JsonResponse({'success': True,'status': 'Completed' if task.is_completed else 'Pending'})
+    except Task.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Task not found'})
+
+
+
+
+def update_task(request, pk):
+    task = get_object_or_404(Task, pk=pk)
+    if request.method == 'POST':
+        task.unit = request.POST.get('unit')
+        task.chapter = request.POST.get('chapter')
+        task.comments = request.POST.get('comments')
+        task.due_date = request.POST.get('due_date')
+        task.section = request.POST.get('section')
+        task.class_name = request.POST.get('class_name')
+        task.save()
+        return redirect('dashboard')
+    return redirect('dashboard')
+
+
+def update_question_progress(request, pk):
+    question = get_object_or_404(QuestionsCompleted, pk=pk)
+    if request.method == 'POST':
+        questions= request.POST.get('questions_completed', 0)
+        questions=0 if questions == '' else questions
+        essay_questions = request.POST.get('essay_completed', 0)
+        essay_questions=0 if essay_questions == '' else essay_questions
+        question.number_of_essay_questions_completed = question.number_of_essay_questions_completed + int(essay_questions)
+        question.number_of_questions_completed = question.number_of_questions_completed + int(questions)
+        question.save()
+        return redirect('dashboard')
+    return redirect('dashboard')
+    
+
+
 
 from django.http import JsonResponse
 from .models import Task

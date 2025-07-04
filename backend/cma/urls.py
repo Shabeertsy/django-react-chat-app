@@ -9,5 +9,8 @@ urlpatterns = [
     path('delete-question/<int:question_id>/', views.delete_question, name='delete_question'),
     path('delete-task/<int:task_id>/', views.delete_task, name='delete_task'),
     path('add_task_json/', views.bulk_add_tasks, name='add_task_json'),
+    path('mark-task-completed/<int:pk>/', views.mark_task_completed, name='mark_task_completed'),
+    path('update-task/<int:pk>/', views.update_task, name='update_task'),
+    path('update-question-progress/<int:pk>/', views.update_question_progress, name='update_question_progress'),
 ]
 
