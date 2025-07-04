@@ -1,4 +1,6 @@
 {% load static %}
+{% load dict_filters %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -263,6 +265,56 @@
   font-weight: 600;
   color: var(--accent);
 }
+
+
+
+#character-container {
+  position: relative;
+  height: 200px;
+  margin-top: 2rem;
+  overflow: hidden;
+}
+
+#character-popup {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0;
+  animation: popUp 0.6s ease-out forwards;
+}
+@keyframes popUp {
+  0% {
+    transform: scale(0.5) translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+
+#character-popup img {
+  width: 60px;
+  height: auto;
+}
+
+#character-message {
+  color: var(--accent);
+  font-weight: bold;
+  margin-top: 0.5rem;
+  text-shadow: 0 0 5px var(--accent);
+}
+
+@keyframes popUp {
+  0% { transform: translateY(100%); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+
+
+
   </style>
 </head>
 
@@ -303,14 +355,29 @@
       <div class="progress-bar-bg">
         <div class="progress-bar-fill" id="progressFill"></div>
       </div>
-      <div class="progress-text" id="wasted-percent">10%</div>
+      <div class="progress-text" id="wasted-percent">{{progress_percent}}%</div>
     </div>
     </div>
     </div>
 
 
+      <div class="summary-section" style="margin-top: 2rem; position: relative;">
+        <h2 style="color: var(--accent); margin-bottom: 1rem;">Section-wise Completed Status</h2>
+        <div style="display: flex; flex-wrap: wrap; gap: 1rem; max-width: 100%; align-items: stretch;">         
+          {% for sec in "ABCDEF" %}
+          <div style="flex: 1; min-width: 200px; background: var(--glass); border: 1px solid var(--border);
+                      border-radius: 12px; padding: 1rem; position: relative; box-shadow: var(--shadow);">
+            <h3 style="color: var(--subtext); font-size: 1.1rem;">Section {{ sec }}</h3>
+            <p style="margin: 0.4rem 0;">✅ Chapters : <strong>{{ dummy_classes|get_item:sec }}</strong></p>
+            <p style="margin: 0.4rem 0;">📝 Questions : <strong>{{ dummy_questions|get_item:sec }}</strong></p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
 
-    <div class="table-controls">
+
+
+    <div class="table-controls" style='margin-top: 2rem;'>
       <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
         <div>
           <button class="tab-btn active" onclick="switchTab('classes', event)">Classes</button>
@@ -347,7 +414,8 @@
 
     <!-- CLASS FORM -->
     <form id="class-form" method="POST" action="{% url 'add_task' %}">
-      {% csrf_token %}
+      {%
+ csrf_token %}
       <input type="text" name="unit" placeholder="Unit" required />
       <input type="text" name="chapter" placeholder="Chapter" />
       <input type="text" name="comments" placeholder="Remarks" />
@@ -372,135 +440,143 @@
 
   <button type="submit">Save Question</button>
 </form>
-
   </div>
 </div>
 
 
-  <script>
-    let currentTab = 'classes';
-    let currentSection = 'A';
-    let editIndex = null;
-    let fetchedData = {
-      classes: { A: [], B: [], C: [], D: [], E: [], F: [] },
-      questions: { A: [], B: [], C: [], D: [], E: [], F: [] }
-    };
+<!-- Character popup outside the container -->
+<div id="character-popup" style="position: absolute; display: none; flex-direction: column; align-items: center; z-index: 9999;">
+  <img src="{% static 'img/luffy.png' %}" alt="Mascot" style="width: 70px;" />
+  <div id="character-message"></div>
+</div>
 
 
-    // Fetch initial data
-    function fetchDataAndRender() {
-      fetch('get-tasks/')
-        .then(response => response.json())
-        .then(data => {
-          console.log(data, 'fetched data');
-          fetchedData = data;
-          renderTable();
-        })
-        .catch(error => {
-          console.error('Error fetching data:', error);
-        });
-    }
-
-    function switchTab(tab, e) {
-      currentTab = tab;
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      e.target.classList.add('active');
-      renderTable();
-    }
-
-    function switchSection(section, e) {
-      currentSection = section;
-      document.querySelectorAll('.sec-btn').forEach(b => b.classList.remove('active'));
-      e.target.classList.add('active');
-      document.getElementById("current-section").textContent = currentSection;
-      document.getElementById("section-input").value = currentSection;
-      document.getElementById("question-section").value = currentSection;
-      renderTable();
-    }
-
-    
-    fetchDataAndRender()
+<script>
+      let currentTab = 'classes';
+      let currentSection = 'A';
+      let editIndex = null;
+      let fetchedData = {
+        classes: { A: [], B: [], C: [], D: [], E: [], F: [] },
+        questions: { A: [], B: [], C: [], D: [], E: [], F: [] }
+      };
 
 
-    function renderStatusCell(status) {
-  if (typeof status !== "string") return status;
-  const lower = status.toLowerCase();
-  console.log("Rendering status cell for:", lower);
-  if (lower === "completed") {
-    return `<span style="background:#16a34a;padding:4px 10px;border-radius:6px;color:white;">Completed</span>`;
-  }
-  return `<span style="background:#facc15;padding:4px 10px;border-radius:6px;color:black;">Pending</span>`;
-}
-
-function renderTable() {
-  const rows = fetchedData[currentTab][currentSection];
-  const head = currentTab === 'classes'
-    ? "<th>Unit</th><th>Chapter</th><th>Remark</th><th>Due Date</th><th>Status</th><th>id</th>"
-    : "<th>Unit</th><th>Total Questions</th><th>Total Essay Questions</th><th>Due Date</th><th>Questions Completed</th><th>Essay Completed</th><th>Pending</th><th>Pending Essay</th><th>id</th>";
-
-  let html = `<table><thead><tr>${head}<th>Actions</th></tr></thead><tbody>`;
-
-  if (!rows.length) {
-    html += `<tr><td colspan="100%">No data in Section ${currentSection}</td></tr>`;
-  } else {
-    rows.forEach((row, i) => {
-      const id = row[row.length - 1];
-      const statusIndex = currentTab === 'classes' ? 4 : null;
-
-      const cells = row.map((cell, idx) => {
-      if (currentTab === 'classes' && idx === statusIndex) {
-        return `<td>${renderStatusCell(cell)}</td>`;
+      // Fetch initial data
+      function fetchDataAndRender() {
+        fetch('get-tasks/')
+          .then(response => response.json())
+          .then(data => {
+            console.log(data, 'fetched data');
+            fetchedData = data;
+            renderTable();
+          })
+          .catch(error => {
+            console.error('Error fetching data:', error);
+          });
       }
-      if (currentTab === 'questions' && (idx === 6 || idx === 7)) {
-        return `<td><span style="background:#facc15;padding:4px 10px;border-radius:6px;color:black;">${cell}</span></td>`;
+
+      function switchTab(tab, e) {
+        currentTab = tab;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        renderTable();
       }
-      return `<td>${cell}</td>`;
-    });
 
-      html += `<tr>${cells.join("")}
-        <td>
-          ${currentTab === 'classes' ? `<button class="btn-action" onclick="markAsCompleted(${i})">✅</button>` : ''}
-          <button class="btn-action" onclick="editEntry(${i})">✏️</button>
-          <button class="btn-action" onclick="deleteEntry(${i})">🗑️</button>
-        </td>
-      </tr>`;
-    });
+      function switchSection(section, e) {
+        currentSection = section;
+        document.querySelectorAll('.sec-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        document.getElementById("current-section").textContent = currentSection;
+        document.getElementById("section-input").value = currentSection;
+        document.getElementById("question-section").value = currentSection;
+        renderTable();
+      }
+
+      
+      fetchDataAndRender()
+
+
+      function renderStatusCell(status) {
+        
+      if (typeof status !== "string") return status;
+      const lower = status.toLowerCase();
+      console.log("Rendering status cell for:", lower);
+      if (lower === "completed") {
+        return `<span style="background:#16a34a;padding:4px 10px;border-radius:6px;color:white;">Completed</span>`;
+      }
+      return `<span style="background:#facc15;padding:4px 10px;border-radius:6px;color:black;">Pending</span>`;
+    }
+
+
+  function renderTable() {
+    const rows = fetchedData[currentTab][currentSection];
+    const head = currentTab === 'classes'
+      ? "<th>Unit</th><th>Chapter</th><th>Remark</th><th>Due Date</th><th>Status</th><th>id</th>"
+      : "<th>Unit</th><th>Total Questions</th><th>Total Essay Questions</th><th>Due Date</th><th>Questions Completed</th><th>Essay Completed</th><th>Pending</th><th>Pending Essay</th><th>Status</th><th>id</th>";
+
+    let html = `<table><thead><tr>${head}<th>Actions</th></tr></thead><tbody>`;
+
+    if (!rows.length) {
+      html += `<tr><td colspan="100%">No data in Section ${currentSection}</td></tr>`;
+    } else {
+      rows.forEach((row, i) => {
+        const id = row[row.length - 1];
+        const statusIndex = currentTab === 'classes' ? 4 : null;
+
+        const cells = row.map((cell, idx) => {
+        if (currentTab === 'classes' && idx === statusIndex) {
+          return `<td>${renderStatusCell(cell)}</td>`;
+        }
+        if (currentTab === 'questions' && (idx === 6 || idx === 7)) {
+          return `<td><span style="background:#facc15;padding:4px 10px;border-radius:6px;color:black;">${cell}</span></td>`;
+        }
+        return `<td>${cell}</td>`;
+      });
+
+        html += `<tr>${cells.join("")}
+          <td>
+            ${currentTab === 'classes' ? `<button class="btn-action" onclick="markAsCompleted(${i})">✅</button>` : ''}
+            <button class="btn-action" onclick="editEntry(${i})">✏️</button>
+            <button class="btn-action" onclick="deleteEntry(${i})">🗑️</button>
+          </td>
+        </tr>`;
+      });
+    }
+
+    html += "</tbody></table>";
+    document.getElementById("dynamic-table").innerHTML = html;
   }
 
-  html += "</tbody></table>";
-  document.getElementById("dynamic-table").innerHTML = html;
-}
 
 
+  function openModal() {
+    document.getElementById("modal").style.display = "flex";
+    document.getElementById("modal-title").innerText = currentTab === "classes" ? "Add Class Task" : "Add Questions";
 
-function openModal() {
-  document.getElementById("modal").style.display = "flex";
-  document.getElementById("modal-title").innerText = currentTab === "classes" ? "Add Class Task" : "Add Questions";
+    editIndex = null;
 
-  editIndex = null;
+    document.getElementById("section-input").value = currentSection;
+    document.getElementById("question-section").value = currentSection;
 
-  document.getElementById("section-input").value = currentSection;
-  document.getElementById("question-section").value = currentSection;
+    const classForm = document.getElementById("class-form");
+    const questionForm = document.getElementById("question-form");
 
-  const classForm = document.getElementById("class-form");
-  const questionForm = document.getElementById("question-form");
+    if (currentTab === "classes") {
+      classForm.style.display = "block";
+      questionForm.style.display = "none";
+      classForm.reset();
+      classForm.action = "{% url 'add_task' %}";
+    } else {
+      classForm.style.display = "none";
+      questionForm.style.display = "block";
+      questionForm.reset();
+      questionForm.action = "{% url 'add_questions' %}";
 
-  if (currentTab === "classes") {
-    classForm.style.display = "block";
-    questionForm.style.display = "none";
-    classForm.reset();
-    classForm.action = "{% url 'add_task' %}";
-  } else {
-    classForm.style.display = "none";
-    questionForm.style.display = "block";
-    questionForm.reset();
-    questionForm.action = "{% url 'add_questions' %}";
-
-    // Hide completed fields during add
-    questionForm.querySelector("[name='questions_completed']").style.display = "none";
-    questionForm.querySelector("[name='essay_completed']").style.display = "none";
+      // Hide completed fields during add
+      questionForm.querySelector("[name='questions_completed']").style.display = "none";
+      questionForm.querySelector("[name='essay_completed']").style.display = "none";
+    }
   }
-}
 
 
 
@@ -593,44 +669,43 @@ function openModal() {
     document.getElementById("current-date").textContent = today.toLocaleDateString("en-US", {
       weekday: "long", year: "numeric", month: "short", day: "numeric"
     });
+    document.getElementById("progressFill").style.width = '{{progress_percent}}' + "%";
 
-    document.getElementById("progressFill").style.width = '60' + "%";
 
+    function editEntry(index) {
+      editIndex = index;
+      const row = fetchedData[currentTab][currentSection][index];
+      openModal();
 
-function editEntry(index) {
-  editIndex = index;
-  const row = fetchedData[currentTab][currentSection][index];
-  openModal();
+      document.getElementById("modal-title").innerText = "Update Progress";
 
-  document.getElementById("modal-title").innerText = "Update Progress";
+      const id = row[row.length - 1].trim();
 
-  const id = row[row.length - 1].trim();
+      if (currentTab === "questions") {
+        const form = document.getElementById("question-form");
 
-  if (currentTab === "questions") {
-    const form = document.getElementById("question-form");
+        form.querySelector("[name='unit']").style.display = "none";
+        form.querySelector("[name='number_of_questions']").style.display = "none";
+        form.querySelector("[name='number_of_essay_questions']").style.display = "none";
+        form.querySelector("[name='date']").style.display = "none";
 
-    form.querySelector("[name='unit']").style.display = "none";
-    form.querySelector("[name='number_of_questions']").style.display = "none";
-    form.querySelector("[name='number_of_essay_questions']").style.display = "none";
-    form.querySelector("[name='date']").style.display = "none";
+        // Show completed fields only during edit
+        
 
-    // Show completed fields only during edit
-    
+        form.querySelector("[name='unit']").required = false;
+        form.querySelector("[name='number_of_questions']").required = false;
+        form.querySelector("[name='number_of_essay_questions']").required = false;
+        form.querySelector("[name='date']").required = false;
 
-    form.querySelector("[name='unit']").required = false;
-    form.querySelector("[name='number_of_questions']").required = false;
-    form.querySelector("[name='number_of_essay_questions']").required = false;
-    form.querySelector("[name='date']").required = false;
+        form.querySelector("[name='questions_completed']").style.display = "block";
+        form.querySelector("[name='essay_completed']").style.display = "block";
 
-    form.querySelector("[name='questions_completed']").style.display = "block";
-    form.querySelector("[name='essay_completed']").style.display = "block";
+        form.querySelector("[name='questions_completed']").value = row[4] || 0;
+        form.querySelector("[name='essay_completed']").value = row[5] || 0;
 
-    form.querySelector("[name='questions_completed']").value = row[4] || 0;
-    form.querySelector("[name='essay_completed']").value = row[5] || 0;
-
-    form.action = `/api/cma/update-question-progress/${id}/`;
-  }
-}
+        form.action = `/api/cma/update-question-progress/${id}/`;
+      }
+    }
 
 
 
@@ -644,7 +719,76 @@ function editEntry(index) {
 
     document.getElementById("greeting-text").textContent = getGreeting();
 
- 
   </script>
+
+<script>
+const messages = [
+  "You're doing great! 🎯",
+  "Stay sharp! ⚡",
+  "Knowledge is power! 📚",
+  "You got this! 💥",
+  "Keep pushing! 🚀",
+  "Believe in yourself! 🌟",
+  "One step at a time. 🧗",
+  "Success is near! 🏁",
+  "Stay focused, stay strong! 🧠",
+  "Every effort counts! 💪",
+  "You're closer than you think! ⏳",
+  "Shine bright, star! ✨",
+  "Hard work always pays off! 🛠️",
+  "Stay curious, stay learning! 🔍",
+  "You’re capable of amazing things! 🚀",
+  "Finish strong! 🔥",
+  "Progress, not perfection! 🧩",
+  "Just keep going! 🏃‍♂️",
+  "Champions train, losers complain! 🏆",
+  "You are unstoppable! ⚔️"
+];
+
+
+    const popup = document.getElementById("character-popup");
+    const messageEl = document.getElementById("character-message");
+    const container = document.querySelector(".container");
+
+    function showCharacterSide() {
+      const popupWidth = 80;
+      const popupHeight = 100;
+      const containerRect = container.getBoundingClientRect();
+
+      // Limit top position within the visible portion of the container
+      const minTop = containerRect.top;
+      const maxTop = Math.min(containerRect.bottom - popupHeight, window.innerHeight - popupHeight - 20);
+      const top = Math.random() * (maxTop - minTop) + minTop;
+
+      // Position left or right relative to container
+      const side = Math.random() > 0.5 ? 'left' : 'right';
+      const left = side === 'left'
+        ? containerRect.left - popupWidth - 10
+        : containerRect.right + 10;
+
+      popup.style.top = `${top}px`;
+      popup.style.left = `${left}px`;
+
+      const msg = messages[Math.floor(Math.random() * messages.length)];
+      messageEl.textContent = msg;
+
+      popup.style.animation = 'none';
+      popup.offsetHeight; // force reflow
+      popup.style.animation = 'popUp 0.6s ease-out forwards';
+      popup.style.display = 'flex';
+    }
+
+    // Appear every 3 seconds on hover
+    let lastHoverTime = 0;
+    document.addEventListener("mousemove", () => {
+      const now = Date.now();
+      if (now - lastHoverTime > 3000) {
+        showCharacterSide();
+        lastHoverTime = now;
+      }
+    });
+</script>
+
+
 </body>
 </html>

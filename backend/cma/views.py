@@ -5,14 +5,58 @@ from django.http import JsonResponse
 
 
 
+
 def index(request):
-    return render(request,'table.html')
+    classes_queryset = Task.objects.all().order_by('due_date')
+    questions_queryset = QuestionsCompleted.objects.all().order_by('due_date')
+
+    total_classes = classes_queryset.count()
+    total_questions = 0
+    completed_questions = 0
+    completed_classes = Task.objects.filter(is_completed=True).count()
+
+    classes = { sec: 0 for sec in "ABCDEF" }
+    questions = { sec: 0 for sec in "ABCDEF" }
+
+    for c in classes_queryset:
+        classes[c.section] = Task.objects.filter(is_completed=True, section=c.section).count()
+
+    for q in questions_queryset:
+        total_questions += 1
+        que_items = QuestionsCompleted.objects.filter(section=q.section)
+        num_que = 0
+        flag = True
+
+        for qu in que_items:
+            num_que += qu.number_of_questions_completed
+            if qu.number_of_questions != qu.number_of_questions_completed or qu.number_of_essay_questions != qu.number_of_essay_questions_completed:
+                flag = False
+        if flag:
+            completed_questions += 1
+        questions[q.section] = num_que
+
+
+    total_items = total_classes + total_questions
+    completed_items = completed_classes + completed_questions
+    if total_items > 0:
+        progress_percent = int((completed_items / total_items) * 100)
+    else:
+        progress_percent = 0
+
+    print(progress_percent)
+
+    return render(request, 'table.html', {
+        'dummy_classes': classes,
+        'dummy_questions': questions,
+        'progress_percent': progress_percent,
+    })
+
+
 
 
 ### task section ####
 def add_task(request):
     if request.method == 'POST':
-        print('aaa',request.POST)
         Task.objects.create(
             chapter_name=request.POST.get('chapter'),
             unit=request.POST.get('unit'),
@@ -20,7 +64,6 @@ def add_task(request):
             section=request.POST.get('section'),
             due_date=request.POST.get('due_date'),
         )
-        print('due_date',request.POST.get('due_date'))
     return redirect('dashboard')
 
 
@@ -57,11 +100,11 @@ def get_tasks(request):
                 f"{q.number_of_essay_questions_completed} ",
                 f"{q.number_of_questions - q.number_of_questions_completed} " if q.number_of_questions !=0 else 0,
                 f"{q.number_of_essay_questions - q.number_of_essay_questions_completed} " if q.number_of_essay_questions !=0 else 0,
+                "Completed" if (q.number_of_questions == q.number_of_questions_completed and q.number_of_essay_questions == q.number_of_essay_questions_completed) else "Pending",
                 f"{q.id} ",
 
             ])
 
-    print(data,'data')
     return JsonResponse(data)
 
 
