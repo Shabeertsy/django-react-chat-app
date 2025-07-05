@@ -203,3 +203,38 @@ def bulk_add_tasks(request):
         except Exception as e:
             return JsonResponse({"success": False, "error": str(e)})
     return JsonResponse({"success": False, "message": "Only POST method allowed."})
+
+
+
+@csrf_exempt
+def generate_questions_from_tasks(request):
+    try:
+        tasks = Task.objects.all()
+        created_count = 0
+
+        for task in tasks:
+            # Check if a QuestionsCompleted already exists for this unit + section
+            exists = QuestionsCompleted.objects.filter(
+                unit=task.unit,
+                section=task.section
+            ).exists()
+
+            if not exists:
+                QuestionsCompleted.objects.create(
+                    unit=task.unit,
+                    section=task.section,
+                    due_date=task.due_date,
+                    number_of_questions=150,   # ← customize default values
+                    number_of_questions_completed=0,
+                    number_of_essay_questions=50,
+                    number_of_essay_questions_completed=0
+                )
+                created_count += 1
+
+        return JsonResponse({
+            "success": True,
+            "message": f"{created_count} QuestionsCompleted objects created."
+        })
+
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)})
