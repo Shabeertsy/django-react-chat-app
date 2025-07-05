@@ -13,5 +13,7 @@ urlpatterns = [
     path('update-task/<int:pk>/', views.update_task, name='update_task'),
     path('update-question-progress/<int:pk>/', views.update_question_progress, name='update_question_progress'),
     path('create-question/',views.generate_questions_from_tasks, name='create_question_from_chapters'),
+    path('login/', views.login_view, name='login'),
+    
 ]
 

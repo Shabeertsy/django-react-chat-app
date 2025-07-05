@@ -1,4 +1,17 @@
 from django.db import models
+from chat.models import Profile
+
+
+class PageVisitLog(models.Model):
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE,null=True, blank=True)
+    ip_address = models.GenericIPAddressField()
+    user_agent = models.TextField()
+    path = models.CharField(max_length=255)
+    visited_at = models.DateTimeField()
+
+    def __str__(self):
+        return f"{self.user.username} visited {self.path} at {self.visited_at}"
+
 
 
 class Task(models.Model):

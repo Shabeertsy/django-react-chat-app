@@ -2,10 +2,24 @@ from django.shortcuts import render,redirect
 from .models import Task,QuestionsCompleted
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login
 
 
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('dashboard')
+        else:
+            return render(request, 'login.html', {'error': 'Invalid credentials'})
+    return render(request, 'login.html')
 
 
+@login_required
 def index(request):
     classes_queryset = Task.objects.all().order_by('due_date')
     questions_queryset = QuestionsCompleted.objects.all().order_by('due_date')

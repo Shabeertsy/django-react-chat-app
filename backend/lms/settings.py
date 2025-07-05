@@ -60,6 +60,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'cma.middleware.PageVisitLoggerMiddleware',
 ]
 
 ROOT_URLCONF = 'lms.urls'
@@ -171,6 +172,7 @@ CORS_ALLOW_METHODS = [
 ]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+LOGIN_URL = '/api/cma/login/'  
 
 
 ### for websocket settings ###
