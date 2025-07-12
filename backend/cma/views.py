@@ -240,7 +240,7 @@ def generate_questions_from_tasks(request):
                     due_date=task.due_date,
                     number_of_questions=150,   # ← customize default values
                     number_of_questions_completed=0,
-                    number_of_essay_questions=50,
+                    number_of_essay_questions=5,
                     number_of_essay_questions_completed=0
                 )
                 created_count += 1
