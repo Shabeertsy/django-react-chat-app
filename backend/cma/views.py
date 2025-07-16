@@ -1,9 +1,13 @@
 from django.shortcuts import render,redirect
-from .models import Task,QuestionsCompleted
+from .models import Task,QuestionsCompleted, Notes
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
+from django.http import HttpResponse
+from django.template.loader import get_template
+from weasyprint import HTML
+
 
 
 def login_view(request):
@@ -64,6 +68,60 @@ def index(request):
         'dummy_questions': questions,
         'progress_percent': progress_percent,
     })
+
+
+
+
+def notes(request, chapter_id):
+    chapter = get_object_or_404(Task, id=chapter_id)
+
+    # Try to get the note for this chapter
+    note, created = Notes.objects.get_or_create(chapter=chapter)
+
+    if request.method == 'POST':
+        content = request.POST.get('content')
+        note.text = content
+        note.save()
+        return redirect('notes', chapter_id=chapter.id)
+
+    context = {
+        'note': note,
+        'chapter': chapter,
+    }
+    return render(request, 'notes.html', context)
+
+
+def read_notes(request, chapter_id):
+    chapter = get_object_or_404(Task, id=chapter_id)
+
+    note = Notes.objects.filter(chapter=chapter).first()
+
+    if not note:
+        return render(request, 'read_notes.html', {'error': 'No notes found for this chapter.'})
+
+    context = {
+        'note': note,
+        'chapter': chapter,
+    }
+    return render(request, 'read.html', context)
+
+
+
+def download_notes_pdf(request, chapter_id):
+    chapter = Task.objects.get(id=chapter_id)
+    note = Notes.objects.filter(chapter=chapter).first()
+
+    # 2. Render the HTML template
+    template = get_template('read.html')
+    html_string = template.render({'chapter': chapter, 'note': note})
+
+    # 3. Generate PDF
+    pdf_file = HTML(string=html_string).write_pdf()
+
+    # 4. Return as response
+    response = HttpResponse(pdf_file, content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="Notes_{chapter.unit}.pdf"'
+    return response
 
 
 

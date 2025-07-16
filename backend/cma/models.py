@@ -47,3 +47,11 @@ class QuestionsCompleted(models.Model):
     def __str__(self):
         return f"Question for {self.section}: {self.unit}"
     
+
+
+class Notes(models.Model):
+    chapter = models.ForeignKey(Task, on_delete=models.CASCADE)
+    text = models.TextField(blank=True)
+
+    def __str__(self):
+        return f"Notes for {self.chapter.chapter_name} - {self.chapter.unit} - {self.chapter.section}"

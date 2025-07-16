@@ -535,9 +535,10 @@
 
         html += `<tr>${cells.join("")}
           <td>
-            ${currentTab === 'classes' ? `<button class="btn-action" onclick="markAsCompleted(${i})">✅</button>` : ''}
-            <button class="btn-action" onclick="editEntry(${i})">✏️</button>
-            <button class="btn-action" onclick="deleteEntry(${i})">🗑️</button>
+            ${currentTab === 'classes' ? `<button class="btn-action" onclick="markAsCompleted(${i})"  title="Mark as Completed">✅</button>` : ''}
+            <button class="btn-action" onclick="editEntry(${i})" title="edit">✏️</button>
+            <button class="btn-action" onclick="notes(${i})" title="View Notes">📝</button>
+            <button class="btn-action" onclick="deleteEntry(${i})"  title="Delete Entry">🗑️</button>
           </td>
         </tr>`;
       });
@@ -625,7 +626,23 @@
         });
     }
 
-    
+    function notes(index) {
+
+      const notesBaseUrl = "{% url 'notes' 0 %}";
+  const row = fetchedData[currentTab][currentSection][index];
+  const id = row[row.length - 1]; // get ID
+  const cleanId = String(id).trim();
+
+  // Build the real URL by replacing the dummy
+  const finalUrl = notesBaseUrl.replace(/0\/$/, `${cleanId}/`);
+
+  console.log("Opening notes page:", finalUrl);
+  window.location.href = finalUrl;
+}
+
+
+
+
     function markAsCompleted(index) {
       const row = fetchedData[currentTab][currentSection][index];
       const id = row[row.length - 1]; // assuming ID is last item in row
@@ -654,6 +671,7 @@
           console.error("Mark as completed error:", error);
         });
     }
+
 
 
     // Date Logic

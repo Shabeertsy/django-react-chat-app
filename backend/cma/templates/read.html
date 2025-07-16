@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Read Notes: {{ chapter.title }}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4a6fa5;
+      --secondary: #166088;
+      --accent: #4fc3a1;
+      --light-bg: #f8f9fa;
+      --text: #2d3748;
+      --text-light: #4a5568;
+      --white: #ffffff;
+      --highlight: #fff9c4;
+    }
+    
+    body {
+      margin: 0;
+      background: var(--light-bg);
+      color: var(--text);
+      font-family: 'Merriweather', serif;
+      line-height: 1.8;
+      font-size: 18px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: var(--white);
+      padding: 25px 40px;
+      text-align: center;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      font-size: 26px;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      position: relative;
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--accent);
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+      background: var(--white);
+      box-shadow: 0 6px 30px rgba(0,0,0,0.08);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+
+    .container:hover {
+      transform: translateY(-2px);
+    }
+
+    .content {
+      padding: 40px 50px;
+    }
+
+    .content h1 {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      color: var(--secondary);
+      margin-top: 30px;
+      margin-bottom: 20px;
+      font-size: 32px;
+      position: relative;
+      padding-bottom: 10px;
+    }
+
+    .content h1::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 60px;
+      height: 3px;
+      background: var(--accent);
+    }
+
+    .content h2 {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      color: var(--primary);
+      margin-top: 40px;
+      margin-bottom: 15px;
+      font-size: 26px;
+    }
+
+    .content h3 {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      color: var(--text);
+      margin-top: 30px;
+      margin-bottom: 15px;
+      font-size: 22px;
+    }
+
+    .content p {
+      margin-bottom: 25px;
+      color: var(--text-light);
+    }
+
+    .content a {
+      color: var(--secondary);
+      text-decoration: none;
+      border-bottom: 2px solid var(--accent);
+      transition: all 0.2s ease;
+    }
+
+    .content a:hover {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    .content img {
+      max-width: 100%;
+      display: block;
+      margin: 40px auto;
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .content img:hover {
+      transform: scale(1.02);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.15);
+    }
+
+    .content blockquote {
+      border-left: 4px solid var(--accent);
+      background: rgba(79, 195, 161, 0.05);
+      padding: 20px 30px;
+      margin: 30px 0;
+      font-style: italic;
+      color: var(--text);
+      border-radius: 0 8px 8px 0;
+    }
+
+    .content pre {
+      background: #2d3748;
+      color: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .content code {
+      background: rgba(79, 195, 161, 0.1);
+      color: var(--secondary);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 16px;
+    }
+
+    .content ul, 
+    .content ol {
+      margin-bottom: 25px;
+      padding-left: 25px;
+    }
+
+    .content li {
+      margin-bottom: 8px;
+      position: relative;
+    }
+
+    .content ul li::before {
+      content: "•";
+      color: var(--accent);
+      font-weight: bold;
+      display: inline-block;
+      width: 1em;
+      margin-left: -1em;
+    }
+
+    .content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 30px 0;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    }
+
+    .content table th {
+      background: var(--primary);
+      color: white;
+      padding: 12px 15px;
+      text-align: left;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+    }
+
+    .content table td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .content table tr:nth-child(even) {
+      background: rgba(74, 111, 165, 0.05);
+    }
+
+    .content table tr:hover {
+      background: rgba(79, 195, 161, 0.1);
+    }
+
+    .footer {
+      text-align: center;
+      margin: 60px 0 40px;
+      color: var(--text-light);
+      font-size: 15px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .footer a {
+      color: var(--secondary);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .footer a:hover {
+      color: var(--primary);
+    }
+
+    @media (max-width: 768px) {
+      .content {
+        padding: 30px;
+      }
+      
+      header {
+        font-size: 22px;
+        padding: 20px;
+      }
+      
+      .content h1 {
+        font-size: 28px;
+      }
+      
+      .content h2 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    📖 {{ chapter.unit }}
+  </header>
+
+  <div class="container">
+    <div class="content">
+      {{ note.text|safe }}
+    </div>
+  </div>
+
+  <div class="footer">
+    &copy; 2025 <a href="#">Knowledge Dashboard</a> — Happy Learning!
+  </div>
+</body>
+</html>

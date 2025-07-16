@@ -1,0 +1,229 @@
+<!-- notes.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Notes for {{ chapter.title }}</title>
+  <style>
+   html, body {
+  height: 100%;
+  margin: 0;
+  background:rgb(33, 35, 40);
+  color: #ddd;
+  font-family: 'Poppins', Arial, sans-serif;
+}
+
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      padding: 40px;
+      box-sizing: border-box;
+    }
+
+    h2 {
+      text-align: center;
+    }
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+  background: #f7c948; /* Modern yellow */
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.toolbar button,
+.toolbar select,
+.toolbar input[type="color"] {
+  background: #333; /* Dark for contrast */
+  color: #fff;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 50px;
+}
+
+.toolbar button:hover,
+.toolbar select:hover {
+  background: #555;
+}
+
+.toolbar label span {
+  font-size: 10px;
+  color: #222; /* Dark text on yellow bg */
+  margin-top: 2px;
+}
+
+    #editor {
+      flex: 1;
+      background:rgb(253, 253, 253);
+      color: black;
+      border: 1px solid #444;
+      padding: 20px;
+      border-radius: 6px;
+      overflow-y: auto;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    button[type="submit"] {
+      margin-top: 10px;
+      margin-bottom: 20px;
+      background: #f7c948;
+      color: #black;
+      padding: 12px 24px;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 16px;
+      align-self: flex-start;
+    }
+
+    button[type="submit"]:hover {
+      background: #666;
+    }
+
+    .actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+}
+
+.actions button {
+  background: #0066cc;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.3s;
+}
+
+.actions button:hover {
+  background: #004a99;
+}
+
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+</head>
+<body>
+  <div class="container">
+    <h2>{{ chapter.unit }}</h2>
+
+    <form method="POST">
+        <!-- Save Notes button -->
+{% comment %} <button type="submit">Save Notes</button> {% endcomment %}
+
+<!-- Buttons aligned right -->
+<div class="actions">
+  <a href="{% url 'read_notes' chapter.id %}"><button type="button" >📖 Read</button></a>
+  <a href="{% url 'generate_pdf' chapter.id %}"><button type="button" >⬇️ Download PDF</button></a>
+</div>
+
+      {% csrf_token %}
+      <div class="toolbar" style="margin-top: 20px;">
+        <!-- Same toolbar buttons as before -->
+        <button type="button" onclick="execCmd('bold')">🅱️<span>Bold</span></button>
+        <button type="button" onclick="execCmd('italic')">✨<span>Italic</span></button>
+        <button type="button" onclick="execCmd('underline')">🔽<span>Underline</span></button>
+
+        <select onchange="setHeading(this)">
+          <option value="">Heading</option>
+          <option value="H1">H1</option>
+          <option value="H2">H2</option>
+          <option value="H3">H3</option>
+        </select>
+
+        <button type="button" onclick="execCmd('insertUnorderedList')">🔹<span>UL</span></button>
+        <button type="button" onclick="execCmd('insertOrderedList')">🔢<span>OL</span></button>
+
+        <button type="button" onclick="execCmd('justifyLeft')">⬅️<span>Left</span></button>
+        <button type="button" onclick="execCmd('justifyCenter')">↔️<span>Center</span></button>
+        <button type="button" onclick="execCmd('justifyRight')">➡️<span>Right</span></button>
+
+        <button type="button" onclick="createLink()">🔗<span>Link</span></button>
+
+        <select onchange="setFontSize(this)">
+          <option value="">Size</option>
+          <option value="1">XS</option>
+          <option value="2">S</option>
+          <option value="3">M</option>
+          <option value="4">L</option>
+          <option value="5">XL</option>
+          <option value="6">XXL</option>
+          <option value="7">XXXL</option>
+        </select>
+
+        <label style="display: flex; flex-direction: column; align-items: center;">
+          <input style="border: 1px solid white; border-radius: 4px; padding: 4px;height: 36px;" type="color" onchange="setColor(this)">
+          <span style="font-size: 10px; color: white; margin-top: 2px;">Color</span>
+        </label>
+
+        <button type="button" onclick="insertImage()">🖼️<span>Image</span></button>
+      </div>
+
+      <div id="editor" contenteditable="true">{{ note.text|safe }}</div>
+
+      <input type="hidden" name="content" id="hidden-content">
+
+      <button type="submit">Save Notes</button>
+    </form>
+  </div>
+<script>
+  function execCmd(command, value = null) {
+    document.execCommand(command, false, value);
+  }
+
+  function createLink() {
+    const url = prompt("Enter the URL");
+    if (url) execCmd('createLink', url);
+  }
+
+  function insertImage() {
+    const url = prompt("Enter image URL");
+    if (url) execCmd('insertImage', url);
+  }
+
+  function setFontSize(select) {
+    const size = select.value;
+    if (size) execCmd('fontSize', size);
+  }
+
+  function setColor(input) {
+    const color = input.value;
+    execCmd('foreColor', color);
+  }
+
+  function setHeading(select) {
+    const value = select.value;
+    if (value) {
+      execCmd('formatBlock', '<p>');   // <-- reset to paragraph first!
+      execCmd('formatBlock', `<${value}>`);
+    }
+  }
+
+  document.querySelector('form').addEventListener('submit', function() {
+    document.getElementById('hidden-content').value = document.getElementById('editor').innerHTML;
+  });
+</script>
+
+</body>
+</html>

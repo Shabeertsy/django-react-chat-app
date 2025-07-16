@@ -14,6 +14,9 @@ urlpatterns = [
     path('update-question-progress/<int:pk>/', views.update_question_progress, name='update_question_progress'),
     path('create-question/',views.generate_questions_from_tasks, name='create_question_from_chapters'),
     path('login/', views.login_view, name='login'),
-    
+
+    path('notes/<int:chapter_id>/', views.notes, name='notes'),
+    path('read_notes/<int:chapter_id>/', views.read_notes, name='read_notes'),
+    path('generate_pdf/<int:chapter_id>/', views.download_notes_pdf, name='generate_pdf'),
 ]
 
