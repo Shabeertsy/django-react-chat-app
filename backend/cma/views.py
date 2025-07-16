@@ -112,7 +112,7 @@ def download_notes_pdf(request, chapter_id):
     note = Notes.objects.filter(chapter=chapter).first()
 
     # 2. Render the HTML template
-    template = get_template('read.html')
+    template = get_template('notes_pdf.html')
     html_string = template.render({'chapter': chapter, 'note': note})
 
     # 3. Generate PDF

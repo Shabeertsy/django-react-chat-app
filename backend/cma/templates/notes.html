@@ -1,75 +1,111 @@
-<!-- notes.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>Notes for {{ chapter.chapter_name }}</title>
   <style>
-   html, body {
-  height: 100%;
-  margin: 0;
-  background:rgb(33, 35, 40);
-  color: #ddd;
-  font-family: 'Poppins', Arial, sans-serif;
-}
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: #0f172a;
+      color: #ddd;
+      font-family: 'Poppins', Arial, sans-serif;
+    }
 
+    /* Modern Spline Effect */
+    .spline-container {
+      width: 100%;
+      height: 90px;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(15, 16, 46, 0.9), rgba(17, 18, 57, 0.9));
+    }
+    
+    .spline {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 1200 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z' fill='%23ffffff22'/%3E%3Cpath d='M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z' fill='%23ffffff11'/%3E%3Cpath d='M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z' fill='%23ffffff05'/%3E%3C/svg%3E");
+      background-size: cover;
+      background-position: bottom;
+      animation: wave 12s linear infinite;
+    }
+
+    @keyframes wave {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
 
     .container {
       display: flex;
       flex-direction: column;
-      height: 100%;
+      height: calc(100% - 80px);
       padding: 40px;
       box-sizing: border-box;
     }
 
     h2 {
       text-align: center;
+      color: #f7c948;
+      margin-bottom: 30px;
+      font-size: 2rem;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
-.toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 20px;
-  background: #f7c948; /* Modern yellow */
-  padding: 10px;
-  border-radius: 6px;
-}
 
-.toolbar button,
-.toolbar select,
-.toolbar input[type="color"] {
-  background: #333; /* Dark for contrast */
-  color: #fff;
-  border: none;
-  padding: 8px;
-  cursor: pointer;
-  border-radius: 4px;
-  font-size: 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 50px;
-}
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+      background: rgba(241, 144, 40, 0.9);
+      padding: 12px;
+      border-radius: 8px;
+      backdrop-filter: blur(5px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
 
-.toolbar button:hover,
-.toolbar select:hover {
-  background: #555;
-}
+    .toolbar button,
+    .toolbar select,
+    .toolbar input[type="color"] {
+      background: rgba(51, 51, 51, 0.8);
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      cursor: pointer;
+      border-radius: 6px;
+      font-size: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 50px;
+      transition: all 0.2s ease;
+    }
 
-.toolbar label span {
-  font-size: 10px;
-  color: #222; /* Dark text on yellow bg */
-  margin-top: 2px;
-}
+    .toolbar button:hover,
+    .toolbar select:hover {
+      background: rgba(85, 85, 85, 0.9);
+      transform: translateY(-2px);
+    }
+
+    .toolbar label span {
+      font-size: 10px;
+      color: #222;
+      margin-top: 2px;
+      font-weight: 600;
+    }
 
     #editor {
       flex: 1;
-      background:rgb(253, 253, 253);
-      color: black;
+      background: rgb(253, 253, 253);
+      color: #333;
       border: 1px solid #444;
-      padding: 20px;
-      border-radius: 6px;
+      padding: 25px;
+      border-radius: 8px;
       overflow-y: auto;
+      box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
+      line-height: 1.6;
     }
 
     form {
@@ -80,90 +116,119 @@
 
     button[type="submit"] {
       margin-top: 10px;
-      margin-bottom: 20px;
-      background: #f7c948;
-      color: #black;
+      background:rgba(241, 144, 40, 0.9);
+      color: #222;
       padding: 12px 24px;
       border: none;
       cursor: pointer;
-      border-radius: 4px;
+      border-radius: 6px;
       font-size: 16px;
+      font-weight: 600;
       align-self: flex-start;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
     button[type="submit"]:hover {
-      background: #666;
+      background: #f8d774;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
 
     .actions {
-  margin-top: 20px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 15px;
-}
+      margin-top: 20px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+    }
 
-.actions button {
-  background: #0066cc;
-  color: #fff;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: background 0.3s;
-}
+    .actions button {
+      background: rgba(244, 126, 0, 0.9);
+      color: #fff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.3s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
 
-.actions button:hover {
-  background: #004a99;
-}
+    .actions button:hover {
+      background: rgba(0, 74, 153, 0.9);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
 
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+      
+      .toolbar {
+        gap: 8px;
+        padding: 8px;
+      }
+      
+      .toolbar button,
+      .toolbar select {
+        padding: 6px 8px;
+        font-size: 14px;
+      }
+      
+      #editor {
+        padding: 15px;
+      }
+    }
   </style>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+
+  <!-- Modern Spline Effect -->
+  <div class="spline-container">
+    <div class="spline">
+    </div>
+         <h2 style="color: rgb(252, 252, 252);">{{ chapter.chapter_name }}</h2>
+
+  </div>
+
   <div class="container">
-    <h2>{{ chapter.chapter_name }}</h2>
-
-    <form method="POST">
-        <!-- Save Notes button -->
-{% comment %} <button type="submit">Save Notes</button> {% endcomment %}
-
-<!-- Buttons aligned right -->
-<div class="actions">
-  <a href="{% url 'dashboard' %}"><button type="button" >🔙 Back</button></a>
-
-  <a href="{% url 'read_notes' chapter.id %}"><button type="button" >📖 Read</button></a>
-  <a href="{% url 'generate_pdf' chapter.id %}"><button type="button" >⬇️ Download PDF</button></a>
-</div>
-
+<form method="POST">
       {% csrf_token %}
-      <div class="toolbar" style="margin-top: 20px;">
-        <!-- Same toolbar buttons as before -->
-        <button type="button" onclick="execCmd('bold')">🅱️<span>Bold</span></button>
-        <button type="button" onclick="execCmd('italic')">✨<span>Italic</span></button>
-        <button type="button" onclick="execCmd('underline')">🔽<span>Underline</span></button>
 
-        <select onchange="setHeading(this)">
+      <div class="actions">
+        <a href="{% url 'dashboard' %}"><button type="button">🔙 Back</button></a>
+        <a href="{% url 'read_notes' chapter.id %}"><button type="button">📖 Read</button></a>
+        <a href="{% url 'generate_pdf' chapter.id %}"><button type="button">⬇️ Download PDF</button></a>
+      </div>
+
+      <div class="toolbar" style="margin-top: 20px;">
+        <button type="button" onclick="execCmd('bold')" title="Bold">🅱️<span>Bold</span></button>
+        <button type="button" onclick="execCmd('italic')" title="Italic">✨<span>Italic</span></button>
+        <button type="button" onclick="execCmd('underline')" title="Underline">🔽<span>Underline</span></button>
+
+        <select onchange="setHeading(this)" title="Heading Style">
           <option value="">Heading</option>
           <option value="H1">H1</option>
           <option value="H2">H2</option>
           <option value="H3">H3</option>
         </select>
 
-        <button type="button" onclick="execCmd('insertUnorderedList')">🔹<span>UL</span></button>
-        <button type="button" onclick="execCmd('insertOrderedList')">🔢<span>OL</span></button>
+        <button type="button" onclick="execCmd('insertUnorderedList')" title="Bullet List">🔹<span>UL</span></button>
+        <button type="button" onclick="execCmd('insertOrderedList')" title="Numbered List">🔢<span>OL</span></button>
 
-        <button type="button" onclick="execCmd('justifyLeft')">⬅️<span>Left</span></button>
-        <button type="button" onclick="execCmd('justifyCenter')">↔️<span>Center</span></button>
-        <button type="button" onclick="execCmd('justifyRight')">➡️<span>Right</span></button>
+        <button type="button" onclick="execCmd('justifyLeft')" title="Align Left">⬅️<span>Left</span></button>
+        <button type="button" onclick="execCmd('justifyCenter')" title="Center">↔️<span>Center</span></button>
+        <button type="button" onclick="execCmd('justifyRight')" title="Align Right">➡️<span>Right</span></button>
 
-        <button type="button" onclick="createLink()">🔗<span>Link</span></button>
+        <button type="button" onclick="createLink()" title="Insert Link">🔗<span>Link</span></button>
 
-        <select onchange="setFontSize(this)">
+        <select onchange="setFontSize(this)" title="Font Size">
           <option value="">Size</option>
           <option value="1">XS</option>
           <option value="2">S</option>
@@ -174,58 +239,64 @@
           <option value="7">XXXL</option>
         </select>
 
-        <label style="display: flex; flex-direction: column; align-items: center;">
+        <label title="Text Color">
           <input style="border: 1px solid white; border-radius: 4px; padding: 4px;height: 36px;" type="color" onchange="setColor(this)">
           <span style="font-size: 10px; color: white; margin-top: 2px;">Color</span>
         </label>
 
-        <button type="button" onclick="insertImage()">🖼️<span>Image</span></button>
+        <button type="button" onclick="insertImage()" title="Insert Image">🖼️<span>Image</span></button>
       </div>
 
       <div id="editor" contenteditable="true">{{ note.text|safe }}</div>
 
       <input type="hidden" name="content" id="hidden-content">
-
-      <button type="submit">Save Notes</button>
+      <button type="submit">💾 Save Notes</button>
     </form>
   </div>
-<script>
-  function execCmd(command, value = null) {
-    document.execCommand(command, false, value);
-  }
 
-  function createLink() {
-    const url = prompt("Enter the URL");
-    if (url) execCmd('createLink', url);
-  }
-
-  function insertImage() {
-    const url = prompt("Enter image URL");
-    if (url) execCmd('insertImage', url);
-  }
-
-  function setFontSize(select) {
-    const size = select.value;
-    if (size) execCmd('fontSize', size);
-  }
-
-  function setColor(input) {
-    const color = input.value;
-    execCmd('foreColor', color);
-  }
-
-  function setHeading(select) {
-    const value = select.value;
-    if (value) {
-      execCmd('formatBlock', '<p>');   // <-- reset to paragraph first!
-      execCmd('formatBlock', `<${value}>`);
+  <script>
+    function execCmd(command, value = null) {
+      document.execCommand(command, false, value);
+      document.getElementById('editor').focus();
     }
-  }
 
-  document.querySelector('form').addEventListener('submit', function() {
-    document.getElementById('hidden-content').value = document.getElementById('editor').innerHTML;
-  });
-</script>
+    function createLink() {
+      const url = prompt("Enter the URL");
+      if (url) execCmd('createLink', url);
+    }
 
+    function insertImage() {
+      const url = prompt("Enter image URL");
+      if (url) execCmd('insertImage', url);
+    }
+
+    function setFontSize(select) {
+      const size = select.value;
+      if (size) execCmd('fontSize', size);
+    }
+
+    function setColor(input) {
+      const color = input.value;
+      execCmd('foreColor', color);
+    }
+
+    function setHeading(select) {
+      const value = select.value;
+      if (value) {
+        execCmd('formatBlock', '<p>');
+        execCmd('formatBlock', `<${value}>`);
+      }
+    }
+
+    document.querySelector('form').addEventListener('submit', function() {
+      document.getElementById('hidden-content').value = document.getElementById('editor').innerHTML;
+    });
+
+    // Focus editor on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('editor').focus();
+    });
+
+  </script>
 </body>
 </html>
