@@ -134,6 +134,8 @@
 
 <!-- Buttons aligned right -->
 <div class="actions">
+  <a href="{% url 'dashboard' %}"><button type="button" >🔙 Back</button></a>
+
   <a href="{% url 'read_notes' chapter.id %}"><button type="button" >📖 Read</button></a>
   <a href="{% url 'generate_pdf' chapter.id %}"><button type="button" >⬇️ Download PDF</button></a>
 </div>
