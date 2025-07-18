@@ -11,6 +11,7 @@
   <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;700&display=swap" rel="stylesheet" />
 
+<script type="module" src="https://unpkg.com/@splinetool/viewer@1.10.32/build/spline-viewer.js"></script>
 
   <style>
     :root {
@@ -277,53 +278,38 @@
   color: var(--accent);
 }
 
-
-
-#character-container {
-  position: relative;
-  height: 200px;
-  margin-top: 2rem;
-  overflow: hidden;
-}
-
 #character-popup {
-  position: absolute;
+  position: fixed;
+  left: 40px;           /* distance from left edge */
+  top: 50%;             /* center vertically */
+  transform: translateY(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  opacity: 0;
-  animation: popUp 0.6s ease-out forwards;
-}
-@keyframes popUp {
-  0% {
-    transform: scale(0.5) translateY(100%);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(1) translateY(0);
-    opacity: 1;
-  }
+  z-index: 9999;
 }
 
-
-#character-popup img {
-  width: 60px;
-  height: auto;
+#character-popup spline-viewer {
+  width: 300px;        /* MUCH bigger */
+  height: 300px;
 }
 
 #character-message {
   color: var(--accent);
   font-weight: bold;
-  margin-top: 0.5rem;
-  text-shadow: 0 0 5px var(--accent);
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 1.5rem;   /* larger text */
+  text-shadow: 0 0 6px var(--accent);
+  max-width: 300px;
+  line-height: 1.4;
 }
-
-@keyframes popUp {
-  0% { transform: translateY(100%); opacity: 0; }
-  100% { transform: translateY(0); opacity: 1; }
+/* ✅ Hide character completely on screens smaller than 768px */
+@media (max-width: 768px) {
+  #character-popup {
+    display: none;
+  }
 }
-
-
 
 
   </style>
@@ -371,10 +357,7 @@
     </div>
     </div>
 
-   <div class="card">
-<script type="module" src="https://unpkg.com/@splinetool/viewer@1.10.32/build/spline-viewer.js"></script>
-<spline-viewer url="https://prod.spline.design/8LFyGz4C0KZmcCoZ/scene.splinecode"></spline-viewer>
-</div>
+
 
       <div class="summary-section" style="margin-top: 2rem; position: relative;">
         <h2 style="color: var(--accent); margin-bottom: 1rem;">Section-wise Completed Status</h2>
@@ -389,16 +372,16 @@
           {% endfor %}
              <div style="flex: 1; min-width: 200px; background: var(--glass); border: 1px solid var(--border);
                       border-radius: 12px; padding: 1rem; position: relative; box-shadow: var(--shadow);text-align:center">
-            <h3 style="color: var(--subtext); font-size: 1.1rem;">Daily Quest</h3>
-          <button class="btn-new"> Go to Quest</button>
+            <h3 style="color: var(--subtext); font-size: 1.1rem;">Chatbot</h3>
+            <button class="btn-new" onclick="window.location.href='{% url 'chatbot' %}'"> Open Chatbot</button>
 
           </div>
-             <div style="flex: 1; min-width: 200px; background: var(--glass); border: 1px solid var(--border);
+             {% comment %} <div style="flex: 1; min-width: 200px; background: var(--glass); border: 1px solid var(--border);
                       border-radius: 12px; padding: 1rem; position: relative; box-shadow: var(--shadow);text-align:center">
             <h3 style="color: var(--subtext); font-size: 1.1rem;">PDF Extractor {{ sec }}</h3>
           <button class="btn-new"> Extract PDF</button>
 
-          </div>
+          </div> {% endcomment %}
         </div>
       </div>
 
@@ -472,10 +455,12 @@
 
 
 <!-- Character popup outside the container -->
-<div id="character-popup" style="position: absolute; display: none; flex-direction: column; align-items: center; z-index: 9999;">
-  <img src="{% static 'img/luff.png' %}" alt="Mascot" style="width: 70px;" />
+<!-- Character popup FIXED to left -->
+<div id="character-popup">
+  <spline-viewer url="https://prod.spline.design/8LFyGz4C0KZmcCoZ/scene.splinecode"></spline-viewer>
   <div id="character-message"></div>
 </div>
+
 
 
 <script>
@@ -767,71 +752,44 @@
   </script>
 
 <script>
-const messages = [
-  "You're doing great! 🎯",
-  "Stay sharp! ⚡",
-  "Knowledge is power! 📚",
-  "You got this! 💥",
-  "Keep pushing! 🚀",
-  "Believe in yourself! 🌟",
-  "One step at a time. 🧗",
-  "Success is near! 🏁",
-  "Stay focused, stay strong! 🧠",
-  "Every effort counts! 💪",
-  "You're closer than you think! ⏳",
-  "Shine bright, star! ✨",
-  "Hard work always pays off! 🛠️",
-  "Stay curious, stay learning! 🔍",
-  "You’re capable of amazing things! 🚀",
-  "Finish strong! 🔥",
-  "Progress, not perfection! 🧩",
-  "Just keep going! 🏃‍♂️",
-  "Champions train, losers complain! 🏆",
-  "You are unstoppable! ⚔️"
-];
+  const messages = [
+    "You're doing great! 🎯",
+    "Stay sharp! ⚡",
+    "Knowledge is power! 📚",
+    "You got this! 💥",
+    "Keep pushing! 🚀",
+    "Believe in yourself! 🌟",
+    "One step at a time. 🧗",
+    "Success is near! 🏁",
+    "Stay focused, stay strong! 🧠",
+    "Every effort counts! 💪",
+    "Shine bright, star! ✨",
+    "Hard work always pays off! 🛠️",
+    "Stay curious, stay learning! 🔍",
+    "You’re capable of amazing things! 🚀",
+    "Stay with me",
+    "Exam aavaan aayikki",
+    "Isha, you are doing great! Keep it up! 🌟",
+    "u r mine and I am yours ❤️",
+    "Padichood ttoo",
+  ];
 
+  const popup = document.getElementById("character-popup");
+  const messageEl = document.getElementById("character-message");
 
-    const popup = document.getElementById("character-popup");
-    const messageEl = document.getElementById("character-message");
-    const container = document.querySelector(".container");
+  // Always show fixed
+  popup.style.display = "flex";
 
-    function showCharacterSide() {
-      const popupWidth = 80;
-      const popupHeight = 100;
-      const containerRect = container.getBoundingClientRect();
+  function updateMessage() {
+    const msg = messages[Math.floor(Math.random() * messages.length)];
+    messageEl.textContent = msg;
+  }
 
-      // Limit top position within the visible portion of the container
-      const minTop = containerRect.top;
-      const maxTop = Math.min(containerRect.bottom - popupHeight, window.innerHeight - popupHeight - 20);
-      const top = Math.random() * (maxTop - minTop) + minTop;
+  // Initial message
+  updateMessage();
 
-      // Position left or right relative to container
-      const side = Math.random() > 0.5 ? 'left' : 'right';
-      const left = side === 'left'
-        ? containerRect.left - popupWidth - 10
-        : containerRect.right + 10;
-
-      popup.style.top = `${top}px`;
-      popup.style.left = `${left}px`;
-
-      const msg = messages[Math.floor(Math.random() * messages.length)];
-      messageEl.textContent = msg;
-
-      popup.style.animation = 'none';
-      popup.offsetHeight; // force reflow
-      popup.style.animation = 'popUp 0.6s ease-out forwards';
-      popup.style.display = 'flex';
-    }
-
-    // Appear every 3 seconds on hover
-    let lastHoverTime = 0;
-    document.addEventListener("mousemove", () => {
-      const now = Date.now();
-      if (now - lastHoverTime > 3000) {
-        showCharacterSide();
-        lastHoverTime = now;
-      }
-    });
+  // Update every 5 seconds
+  setInterval(updateMessage, 5000);
 </script>
 
 

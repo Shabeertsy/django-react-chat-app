@@ -310,3 +310,65 @@ def generate_questions_from_tasks(request):
 
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)})
+
+
+from openai import OpenAI
+
+def get_answer(question):
+    # Build the prompt
+    prompt = f"""
+    Please analyze the following text and answer the question.
+
+    Question: {question}
+
+    text: "cma related bbot"
+
+    Please provide a clear and concise answer based on the document content above.
+    Only provide the answer, do not repeat the question.
+
+    Also, if the question is casual like "hi", "hello", "hii", respond in a friendly gym-bot style.
+    """
+
+    # Initialize the OpenAI client using OpenRouter
+    client = OpenAI(
+        base_url="https://openrouter.ai/api/v1",
+        api_key="<OPENROUTER_API_KEY>",
+    )
+
+    try:
+        completion = client.chat.completions.create(
+            extra_headers={
+                "HTTP-Referer": "<YOUR_SITE_URL>",  # Optional
+                "X-Title": "<YOUR_SITE_NAME>",      # Optional
+            },
+            model="openai/gpt-4o",
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ]
+        )
+
+        # Get the answer text
+        answer = completion.choices[0].message.content.strip()
+        return {'response': answer}
+
+    except Exception as e:
+        print(e)
+        return False
+
+
+
+def chatbot(request):
+    if request.method == 'POST':
+        data = json.loads(request.body) 
+        user_message = data.get('message') 
+
+        res=get_answer(user_message)
+        if not res == False:
+            return JsonResponse(res)
+        else:
+            return JsonResponse({'response': 'your bot is not available now '})
+
+    return render(request, 'chatbot.html')

@@ -18,5 +18,6 @@ urlpatterns = [
     path('notes/<int:chapter_id>/', views.notes, name='notes'),
     path('read_notes/<int:chapter_id>/', views.read_notes, name='read_notes'),
     path('generate_pdf/<int:chapter_id>/', views.download_notes_pdf, name='generate_pdf'),
+    path('chatbot/', views.chatbot, name='chatbot'),
 ]
 
