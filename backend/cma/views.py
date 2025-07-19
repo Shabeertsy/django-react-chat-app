@@ -316,7 +316,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
 from openai import OpenAI
+from dotenv import load_dotenv
 import os
+
+load_dotenv()
 
 client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
