@@ -378,7 +378,7 @@
                     'Content-Type': 'application/json',
                     'X-CSRFToken': getCSRFToken(), // ✅ If using Django CSRF protection
                 },
-                body: JSON.stringify({ question: message }),
+                body: JSON.stringify({ message: message }),
             });
 
             const data = await response.json();

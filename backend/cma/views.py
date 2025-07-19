@@ -9,7 +9,6 @@ from django.template.loader import get_template
 from weasyprint import HTML
 
 
-
 def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -311,52 +310,74 @@ def generate_questions_from_tasks(request):
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)})
 
+# views.py
 
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+import json
 from openai import OpenAI
+import os
+
+client = OpenAI(
+    base_url="https://openrouter.ai/api/v1",
+    api_key=os.getenv('OPENAI_API_KEY',''),
+)
 
 def get_answer(question):
-    # Build the prompt
-    prompt = f"""
-    Please analyze the following text and answer the question.
+        chapter=None
+        print('questionj,',question)
+        try:
+            text_content = 'cma related data'
+            if chapter:
+                prompt = f"""
+You are an expert CMA USA study assistant bot with a friendly, casual tone.
 
-    Question: {question}
+• If the user says hi or greets you, greet them back in a friendly, casual way.
+• If the user asks for advice or tips, give practical, short, clear answers.
+• If the user asks for CMA USA sample questions, ALWAYS provide at least 3 actual sample questions with proper CMA USA context (Part 1 or Part 2) — include question + options if possible.
+• The student’s exam is on October 27, 2025.
 
-    text: "cma related bbot"
+ answer only based on this question Question: {question} if user give simple messages like hi ,hello or greetings responsds in a friendly, casual way
+     if question containes word chapter ask chapter id to user
+Only provide the answer — do not repeat the question.
+"""
 
-    Please provide a clear and concise answer based on the document content above.
-    Only provide the answer, do not repeat the question.
+            else:
+                prompt = f"""
+You are an expert CMA USA study assistant bot with a friendly, casual tone.
 
-    Also, if the question is casual like "hi", "hello", "hii", respond in a friendly gym-bot style.
-    """
+• Base your answer on this CMA USA content: {text_content}
+• If the user greets casually, reply casually like a study buddy.
+• If the user asks about anything related to CMA USA — syllabus, tips, strategy — answer directly and practically.
+• Use simple language.
+• The student’s exam is on October 27, 2025.
 
-    # Initialize the OpenAI client using OpenRouter
-    client = OpenAI(
-        base_url="https://openrouter.ai/api/v1",
-        api_key="<OPENROUTER_API_KEY>",
-    )
+ answer only based on this question Question: {question}
 
-    try:
-        completion = client.chat.completions.create(
-            extra_headers={
-                "HTTP-Referer": "<YOUR_SITE_URL>",  # Optional
-                "X-Title": "<YOUR_SITE_NAME>",      # Optional
-            },
-            model="openai/gpt-4o",
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ]
-        )
+Only provide the answer — do not reflect the question.
+"""
 
-        # Get the answer text
-        answer = completion.choices[0].message.content.strip()
-        return {'response': answer}
+            # Call OpenRouter with your specified model
+            messages = [
+                {"role": "system", "content": "You are a helpful assistant."}]
 
-    except Exception as e:
-        print(e)
-        return False
+            messages.append({"role": "user", "content": prompt})
+
+
+            completion = client.chat.completions.create(
+                extra_headers={
+                    "HTTP-Referer": "https://your-site.com",   # Replace!
+                    "X-Title": "Your Site Name",               # Replace!
+                },
+                model="deepseek/deepseek-r1-0528:free",
+                messages=messages
+            )
+
+            answer = completion.choices[0].message.content.strip()
+            print(answer,'answer')
+            return {'response': answer}
+        except:
+            return False
 
 
 
@@ -366,6 +387,7 @@ def chatbot(request):
         user_message = data.get('message') 
 
         res=get_answer(user_message)
+        print(res,'asdfadsf')
         if not res == False:
             return JsonResponse(res)
         else:
